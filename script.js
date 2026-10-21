@@ -1,18 +1,37 @@
 /**
  * EMMANUEL JOHN PEREZ (ejhay26) — PORTFOLIO CONTROLLER
- * Engineered with Anime.js for handcrafted Neobrutalist physics and motion.
+ * Enhanced: Bidirectional Scroll, GPU Trailing Cursor, Typewriter CLI & Night Sky Canvas
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initSecurityAndSelection();
   initHeroAnimations();
-  initScrollAnimations();
+  initBidirectionalScroll();
   initProjectFilters();
   initThemeToggle();
+  initNightSkyCanvas();
   initTerminal();
 });
 
 /* ==========================================================================
-   1. HERO ENTRANCE CHOREOGRAPHY (ANIME.JS)
+   1. DISABLE RIGHT-CLICK & SELECTION
+   ========================================================================== */
+function initSecurityAndSelection() {
+  // Prevent context menu (right click)
+  document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    return false;
+  });
+
+  // Prevent dragging of any element or link
+  document.addEventListener('dragstart', (e) => {
+    e.preventDefault();
+    return false;
+  });
+}
+
+/* ==========================================================================
+   2. HERO ENTRANCE CHOREOGRAPHY (ANIME.JS)
    ========================================================================== */
 function initHeroAnimations() {
   if (typeof anime === 'undefined') return;
@@ -20,7 +39,7 @@ function initHeroAnimations() {
   // Staggered Title Slam
   anime({
     targets: '.hero-line',
-    translateY: [-50, 0],
+    translateY: [-60, 0],
     opacity: [0, 1],
     delay: anime.stagger(140, { start: 100 }),
     duration: 900,
@@ -30,31 +49,31 @@ function initHeroAnimations() {
   // Sticker Pills Drop & Spring
   anime({
     targets: '.sticker-pill',
-    scale: [0.4, 1],
+    scale: [0.3, 1],
     rotate: (el) => parseFloat(el.getAttribute('data-rotate')) || 0,
     opacity: [0, 1],
-    delay: anime.stagger(120, { start: 400 }),
-    duration: 800,
+    delay: anime.stagger(120, { start: 350 }),
+    duration: 850,
     easing: 'easeOutBack'
   });
 
   // Tagline & Hero Actions Slide-Up
   anime({
     targets: ['.hero-tagline-box', '.hero-actions'],
-    translateY: [30, 0],
+    translateY: [35, 0],
     opacity: [0, 1],
     delay: anime.stagger(150, { start: 500 }),
-    duration: 700,
+    duration: 750,
     easing: 'easeOutCubic'
   });
 
   // Spec Card Pop-In from Right
   anime({
     targets: '.spec-card',
-    translateX: [50, 0],
+    translateX: [60, 0],
     opacity: [0, 1],
-    duration: 850,
-    delay: 600,
+    duration: 900,
+    delay: 550,
     easing: 'easeOutExpo'
   });
 
@@ -63,64 +82,92 @@ function initHeroAnimations() {
     targets: '.spec-row',
     opacity: [0, 1],
     translateX: [15, 0],
-    delay: anime.stagger(80, { start: 800 }),
+    delay: anime.stagger(70, { start: 750 }),
     duration: 500,
     easing: 'easeOutQuad'
   });
+
+  // Subtle interactive mouse parallax on hero cards
+  const heroCard = document.querySelector('.spec-card');
+  if (heroCard) {
+    document.addEventListener('mousemove', (e) => {
+      const { clientX, clientY } = e;
+      const xOffset = (clientX / window.innerWidth - 0.5) * 8;
+      const yOffset = (clientY / window.innerHeight - 0.5) * 8;
+      heroCard.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+    });
+  }
 }
 
 /* ==========================================================================
-   2. SCROLL-TRIGGERED REVEALS (INTERSECTION OBSERVER + ANIME.JS)
+   3. BIDIRECTIONAL SCROLL TRANSITIONS (ENTER & EXIT ON SCROLL UP/DOWN)
    ========================================================================== */
-function initScrollAnimations() {
+function initBidirectionalScroll() {
   if (typeof anime === 'undefined' || !('IntersectionObserver' in window)) return;
 
-  const observedCards = document.querySelectorAll('.project-card, .skill-category, .terminal-window, .contact-box');
+  const scrollElements = document.querySelectorAll('.scroll-card');
+  let lastScrollY = window.scrollY;
 
-  const observer = new IntersectionObserver((entries, obs) => {
+  const observer = new IntersectionObserver((entries) => {
+    const currentScrollY = window.scrollY;
+    const isScrollingDown = currentScrollY > lastScrollY;
+    lastScrollY = currentScrollY;
+
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const target = entry.target;
+      const el = entry.target;
 
+      if (entry.isIntersecting) {
+        // Entering viewport (whether scrolling down or up)
+        const fromY = isScrollingDown ? 45 : -45;
+        anime.remove(el);
         anime({
-          targets: target,
-          translateY: [40, 0],
-          opacity: [0, 1],
+          targets: el,
+          translateY: [fromY, 0],
+          opacity: [0.15, 1],
+          scale: [0.96, 1],
           duration: 650,
           easing: 'easeOutCubic'
         });
 
-        // Rotate child stamps/badges slightly if present
-        const stamp = target.querySelector('.contact-stamp, .stamp-badge');
+        // Stamp badge physics
+        const stamp = el.querySelector('.contact-stamp, .stamp-badge');
         if (stamp) {
           const rot = parseFloat(stamp.getAttribute('data-rotate')) || 0;
           anime({
             targets: stamp,
             rotate: [0, rot],
-            scale: [0.8, 1],
-            duration: 800,
-            delay: 200,
+            scale: [0.75, 1],
+            duration: 750,
+            delay: 150,
             easing: 'easeOutElastic(1, .6)'
           });
         }
-
-        obs.unobserve(target);
+      } else {
+        // Exiting viewport
+        const toY = isScrollingDown ? -30 : 30;
+        anime.remove(el);
+        anime({
+          targets: el,
+          translateY: [0, toY],
+          opacity: [1, 0.15],
+          scale: [1, 0.97],
+          duration: 450,
+          easing: 'easeInQuad'
+        });
       }
     });
   }, {
-    threshold: 0.15,
-    rootMargin: '0px 0px -40px 0px'
+    threshold: 0.12,
+    rootMargin: '-30px 0px -30px 0px'
   });
 
-  observedCards.forEach(card => {
-    // Initial state before triggering
-    card.style.opacity = '0';
-    observer.observe(card);
+  scrollElements.forEach(el => {
+    observer.observe(el);
   });
 }
 
 /* ==========================================================================
-   3. INTERACTIVE PROJECT FILTER
+   4. INTERACTIVE PROJECT FILTER
    ========================================================================== */
 function initProjectFilters() {
   const filterButtons = document.querySelectorAll('.filter-btn');
@@ -137,8 +184,8 @@ function initProjectFilters() {
       if (typeof anime !== 'undefined') {
         anime({
           targets: btn,
-          scale: [0.92, 1],
-          duration: 300,
+          scale: [0.9, 1],
+          duration: 280,
           easing: 'easeOutBack'
         });
       }
@@ -152,7 +199,7 @@ function initProjectFilters() {
           if (typeof anime !== 'undefined') {
             anime({
               targets: card,
-              scale: [0.94, 1],
+              scale: [0.93, 1],
               opacity: [0, 1],
               duration: 400,
               easing: 'easeOutQuad'
@@ -169,7 +216,7 @@ function initProjectFilters() {
 }
 
 /* ==========================================================================
-   4. THEME TOGGLE (LIGHT / DARK NEOBRUTALISM)
+   5. THEME TOGGLE: MIDNIGHT BLUE NIGHT SKY vs DAY PAPER
    ========================================================================== */
 function initThemeToggle() {
   const toggleBtn = document.getElementById('theme-toggle');
@@ -178,7 +225,6 @@ function initThemeToggle() {
   const themeLabel = toggleBtn.querySelector('.theme-label');
   const themeIcon = toggleBtn.querySelector('.theme-icon');
 
-  // Check saved theme
   const savedTheme = localStorage.getItem('ejhay26_theme') || 'light';
   applyTheme(savedTheme);
 
@@ -192,34 +238,121 @@ function initThemeToggle() {
       anime({
         targets: toggleBtn,
         rotate: '+=360deg',
-        scale: [0.9, 1],
+        scale: [0.88, 1],
         duration: 500,
         easing: 'easeOutElastic(1, .6)'
       });
+
+      // Animate the crescent moon on night switch
+      if (nextTheme === 'dark') {
+        anime({
+          targets: '.brutal-crescent-moon',
+          scale: [0, 1],
+          rotate: [-60, -18],
+          duration: 900,
+          easing: 'easeOutElastic(1, .5)'
+        });
+      }
     }
   });
 
   function applyTheme(theme) {
     document.body.setAttribute('data-theme', theme);
     if (theme === 'dark') {
-      themeLabel.textContent = 'LIGHT MODE';
-      themeIcon.textContent = '☀️';
+      themeLabel.textContent = 'DAY PAPER';
+      themeIcon.textContent = '[D]';
     } else {
-      themeLabel.textContent = 'DARK MODE';
-      themeIcon.textContent = '⚡';
+      themeLabel.textContent = 'NIGHT SKY';
+      themeIcon.textContent = '[M]';
     }
   }
 }
 
 /* ==========================================================================
-   5. INTERACTIVE TINKER TERMINAL PLAYGROUND
+   6. NIGHT SKY CANVAS: TWINKLING STARS & SPARKLES
+   ========================================================================== */
+function initNightSkyCanvas() {
+  const canvas = document.getElementById('stars-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  let stars = [];
+  const starCount = 130;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initStars();
+  }
+
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < starCount; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2.5 + 1,
+        alpha: Math.random() * 0.8 + 0.2,
+        twinkleSpeed: (Math.random() * 0.03 + 0.01) * (Math.random() > 0.5 ? 1 : -1),
+        isCross: Math.random() > 0.85 // 15% are stylized cross/diamond stars
+      });
+    }
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  function render() {
+    // Only animate if in dark mode
+    if (document.body.getAttribute('data-theme') === 'dark') {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      stars.forEach(s => {
+        s.alpha += s.twinkleSpeed;
+        if (s.alpha > 0.95 || s.alpha < 0.2) {
+          s.twinkleSpeed = -s.twinkleSpeed;
+        }
+
+        ctx.fillStyle = `rgba(248, 250, 252, ${s.alpha})`;
+
+        if (s.isCross) {
+          // Brutalist 4-point star
+          ctx.beginPath();
+          const sz = s.size * 2.2;
+          ctx.moveTo(s.x, s.y - sz);
+          ctx.lineTo(s.x + sz * 0.3, s.y - sz * 0.3);
+          ctx.lineTo(s.x + sz, s.y);
+          ctx.lineTo(s.x + sz * 0.3, s.y + sz * 0.3);
+          ctx.lineTo(s.x, s.y + sz);
+          ctx.lineTo(s.x - sz * 0.3, s.y + sz * 0.3);
+          ctx.lineTo(s.x - sz, s.y);
+          ctx.lineTo(s.x - sz * 0.3, s.y - sz * 0.3);
+          ctx.closePath();
+          ctx.fill();
+        } else {
+          // Pixel diamond star
+          ctx.fillRect(s.x, s.y, s.size, s.size);
+        }
+      });
+    }
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+}
+
+/* ==========================================================================
+   7. INTERACTIVE TERMINAL: STREAMED TYPEWRITER + GPU TRAILING CURSOR
    ========================================================================== */
 function initTerminal() {
   const terminalScreen = document.getElementById('terminal-screen');
   const termForm = document.getElementById('term-form');
   const termInput = document.getElementById('term-input');
+  const cursorTrail = document.getElementById('cursor-trail');
   const chips = document.querySelectorAll('.term-chip');
   const quickTermBtn = document.getElementById('quick-terminal-btn');
+
+  let isTypingOutput = false;
 
   if (quickTermBtn) {
     quickTermBtn.addEventListener('click', () => {
@@ -231,73 +364,149 @@ function initTerminal() {
     });
   }
 
+  // --- GPU Accelerated Trailing Cursor Calculation (Ghostty / Neovide style) ---
+  const textRuler = document.createElement('span');
+  textRuler.style.visibility = 'hidden';
+  textRuler.style.position = 'absolute';
+  textRuler.style.whiteSpace = 'pre';
+  textRuler.style.fontFamily = "'JetBrains Mono', monospace";
+  textRuler.style.fontSize = '0.9rem';
+  document.body.appendChild(textRuler);
+
+  function updateCursorTrail() {
+    if (!termInput || !cursorTrail) return;
+    const textBeforeCaret = termInput.value.substring(0, termInput.selectionStart || 0);
+    textRuler.textContent = textBeforeCaret;
+    const measuredWidth = textRuler.getBoundingClientRect().width;
+
+    // Smooth spring transform
+    cursorTrail.style.transform = `translateX(${measuredWidth}px)`;
+
+    // Subtle momentary stretch when moving fast
+    cursorTrail.style.width = '12px';
+    clearTimeout(cursorTrail._stretchTimer);
+    cursorTrail._stretchTimer = setTimeout(() => {
+      cursorTrail.style.width = '9px';
+    }, 70);
+  }
+
+  if (termInput) {
+    termInput.addEventListener('input', updateCursorTrail);
+    termInput.addEventListener('keyup', updateCursorTrail);
+    termInput.addEventListener('click', updateCursorTrail);
+    termInput.addEventListener('focus', () => {
+      if (cursorTrail) cursorTrail.style.opacity = '1';
+      updateCursorTrail();
+    });
+    termInput.addEventListener('blur', () => {
+      if (cursorTrail) cursorTrail.style.opacity = '0.5';
+    });
+  }
+
+  // --- Terminal Command Library (Zero Emojis) ---
   const commands = {
-    help: () => `
-<div class="term-line"><span class="term-green">AVAILABLE COMMANDS:</span></div>
-<div class="term-line">  <span class="term-yellow">neofetch</span>        - Display system & developer specifications</div>
-<div class="term-line">  <span class="term-yellow">cat stack.json</span>  - Dump full toolchain & platform breakdown</div>
-<div class="term-line">  <span class="term-yellow">capstone --stat</span> - Show SINE MDRRMO flagship details</div>
-<div class="term-line">  <span class="term-yellow">philosophy</span>      - Architecture tenets & craft ethos</div>
-<div class="term-line">  <span class="term-yellow">whoami</span>          - Identity coordinates</div>
-<div class="term-line">  <span class="term-yellow">contact</span>         - Get in touch directly</div>
-<div class="term-line">  <span class="term-yellow">clear</span>           - Wipe terminal output</div>`,
+    help: () => [
+      `<span class="term-green">AVAILABLE COMMANDS:</span>`,
+      `  <span class="term-yellow">neofetch</span>        - Display system & developer specifications`,
+      `  <span class="term-yellow">cat stack.json</span>  - Dump full toolchain & platform breakdown`,
+      `  <span class="term-yellow">capstone --stat</span> - Show SINE MDRRMO flagship details`,
+      `  <span class="term-yellow">philosophy</span>      - Architecture tenets & craft ethos`,
+      `  <span class="term-yellow">whoami</span>          - Identity coordinates`,
+      `  <span class="term-yellow">contact</span>         - Direct transmission channel`,
+      `  <span class="term-yellow">clear</span>           - Wipe terminal output`
+    ],
 
-    neofetch: () => `
-<div class="term-line" style="display: flex; gap: 24px; flex-wrap: wrap;">
-  <pre class="term-cyan" style="font-family: monospace; font-size: 0.75rem; line-height: 1.2;">
-   .---.     
-  /     \\    ejhay26@niri-box
- | () () |   ----------------
-  \\  _  /    OS: NixOS / Arch Linux (Wayland)
-   \`---\`     Compositor: Niri (scrollable) / Hyprland
-  /     \\    Hardware: Custom OpenCore UEFI
- / |   | \\   RAM Usage: 30MB (Tauri v2 Native)
-|  |   |  |  Git Commits: 1,150+
-  </pre>
-  <div>
-    <div class="term-line"><span class="term-pink">Host:</span> Emmanuel John Perez</div>
-    <div class="term-line"><span class="term-pink">Uptime:</span> 4 years IT study & tinkering</div>
-    <div class="term-line"><span class="term-pink">Shell:</span> zsh 5.9 + Starship</div>
-    <div class="term-line"><span class="term-pink">Terminal:</span> Foot / Alacritty</div>
-    <div class="term-line"><span class="term-pink">Editor:</span> Neovim + VSCode</div>
-    <div class="term-line"><span class="term-pink">Primary:</span> Rust, Laravel 13, Angular 20, Tauri v2</div>
-  </div>
-</div>`,
+    neofetch: () => [
+      `<span class="term-cyan">     .---.      ejhay26@niri-box</span>`,
+      `<span class="term-cyan">    /     \\     ----------------</span>`,
+      `<span class="term-cyan">   | () () |    OS: NixOS / Arch Linux (Wayland)</span>`,
+      `<span class="term-cyan">    \\  _  /     Compositor: Niri (scrollable) / Hyprland</span>`,
+      `<span class="term-cyan">     \`---\`      Hardware: Custom OpenCore UEFI</span>`,
+      `<span class="term-cyan">    /     \\     RAM Footprint: ~30MB (Tauri v2 Native)</span>`,
+      `<span class="term-cyan">   / |   | \\    Git Commits: 1,150+ Verified</span>`,
+      `<span class="term-pink">Host:</span> Emmanuel John Perez`,
+      `<span class="term-pink">Uptime:</span> 4 years IT study & tinkering`,
+      `<span class="term-pink">Shell:</span> zsh 5.9 + Starship prompt`,
+      `<span class="term-pink">Terminal:</span> Foot / Alacritty`,
+      `<span class="term-pink">Editor:</span> Neovim + VSCode`,
+      `<span class="term-pink">Core Stack:</span> Rust, Laravel 13, Angular 20, Tauri v2`
+    ],
 
-    'cat stack.json': () => `
-<pre class="term-yellow" style="font-size: 0.8rem; line-height: 1.4;">
-{
-  "desktop": ["Tauri v2", "Rust", "Capacitor 8"],
-  "backend": ["Laravel 13", "Laravel Reverb (WebSockets)", "MariaDB", "Sanctum"],
-  "frontend": ["Angular 20", "Ionic 8", "Anime.js", "Pure Modern CSS"],
-  "mobile": ["Kotlin", "Android SDK", "Offline Vector GIS"],
-  "lowlevel": ["OpenCore EFI", "ACPI/ASL Tables", "Nix Flakes"]
-}
-</pre>`,
+    'cat stack.json': () => [
+      `<span class="term-yellow">{</span>`,
+      `  <span class="term-cyan">"desktop"</span>: ["Tauri v2", "Rust", "Capacitor 8"],`,
+      `  <span class="term-cyan">"backend"</span>: ["Laravel 13", "Laravel Reverb (WebSockets)", "MariaDB", "Sanctum"],`,
+      `  <span class="term-cyan">"frontend"</span>: ["Angular 20", "Ionic 8", "Anime.js", "Pure Modern CSS"],`,
+      `  <span class="term-cyan">"mobile"</span>: ["Kotlin", "Android SDK", "Offline Vector GIS"],`,
+      `  <span class="term-cyan">"lowlevel"</span>: ["OpenCore EFI", "ACPI/ASL Tables", "Nix Flakes"]`,
+      `<span class="term-yellow">}</span>`
+    ],
 
-    'capstone --stat': () => `
-<div class="term-line"><span class="term-green">★ PROJECT SINE MDRRMO STATUS:</span></div>
-<div class="term-line">  • Version: <span class="term-yellow">v0.75.0</span> (Production-grade capstone)</div>
-<div class="term-line">  • Target: Municipal Disaster Risk Reduction and Management Office</div>
-<div class="term-line">  • Latency: Sub-second WebSocket dispatch via Laravel Reverb</div>
-<div class="term-line">  • Desktop Footprint: ~30MB memory consumption via Tauri v2</div>
-<div class="term-line">  • Resilience: Offline incident queues with dual-sided ID verification</div>`,
+    'capstone --stat': () => [
+      `<span class="term-green">[FLAGSHIP CAPSTONE] SINE MDRRMO PLATFORM:</span>`,
+      `  [+] Version: <span class="term-yellow">v0.75.0</span> (Production-grade capstone)`,
+      `  [+] Target: Municipal Disaster Risk Reduction and Management Office`,
+      `  [+] Realtime Engine: Sub-second WebSocket dispatch via Laravel Reverb`,
+      `  [+] Desktop Footprint: ~30MB native memory consumption via Tauri v2`,
+      `  [+] Citizen Access: Dual-sided government ID verification & offline GPS queue`
+    ],
 
-    philosophy: () => `
-<div class="term-line"><span class="term-cyan">CRAFT ETHOS:</span></div>
-<div class="term-line">  1. <strong>Snappy Over Heavy:</strong> Never load 200MB of Electron when 30MB of Tauri/Rust does it better.</div>
-<div class="term-line">  2. <strong>Offline Resilient:</strong> Real-world software must work when cellular signals fail.</div>
-<div class="term-line">  3. <strong>Zero AI Slop:</strong> Every line of CSS, every animation easing, and every DB query is intentional.</div>`,
+    philosophy: () => [
+      `<span class="term-cyan">ENGINEERING ETHOS:</span>`,
+      `  1. <strong>Snappy Over Heavy:</strong> Never load 200MB of Electron when 30MB of Tauri/Rust does it better.`,
+      `  2. <strong>Offline Resilient:</strong> Real-world software must function when cellular connectivity fails.`,
+      `  3. <strong>Zero AI Slop:</strong> Intentional typography, verified code, zero buzzword soup.`
+    ],
 
-    whoami: () => `
-<div class="term-line">Emmanuel John Perez · Based in Nueva Ecija, Philippines · IT Student, Systems Tinkerer & Full-Stack Builder.</div>`,
+    whoami: () => [
+      `Emmanuel John Perez · Based in Nueva Ecija, Philippines · IT Student, Systems Tinkerer & Full-Stack Builder.`
+    ],
 
-    contact: () => `
-<div class="term-line">Email: <a href="mailto:ejperez623@gmail.com" class="term-yellow" style="text-decoration: underline;">ejperez623@gmail.com</a></div>
-<div class="term-line">GitHub: <a href="https://github.com/ejhay26" target="_blank" class="term-cyan" style="text-decoration: underline;">https://github.com/ejhay26</a></div>`
+    contact: () => [
+      `Email: <a href="mailto:ejperez623@gmail.com" class="term-yellow" style="text-decoration: underline;">ejperez623@gmail.com</a>`,
+      `GitHub: <a href="https://github.com/ejhay26" target="_blank" class="term-cyan" style="text-decoration: underline;">https://github.com/ejhay26</a>`
+    ]
   };
 
+  // Typewriter Stream Effect
+  function streamLines(lines, onComplete) {
+    let lineIndex = 0;
+
+    function typeNextLine() {
+      if (lineIndex >= lines.length) {
+        isTypingOutput = false;
+        if (onComplete) onComplete();
+        return;
+      }
+
+      const rawHtml = lines[lineIndex];
+      const lineDiv = document.createElement('div');
+      lineDiv.className = 'term-line';
+      terminalScreen.appendChild(lineDiv);
+
+      // Fast typing cadence per line
+      lineDiv.innerHTML = rawHtml;
+
+      if (typeof anime !== 'undefined') {
+        anime({
+          targets: lineDiv,
+          opacity: [0, 1],
+          translateX: [4, 0],
+          duration: 120,
+          easing: 'easeOutQuad'
+        });
+      }
+
+      terminalScreen.scrollTop = terminalScreen.scrollHeight;
+      lineIndex++;
+      setTimeout(typeNextLine, 35);
+    }
+
+    typeNextLine();
+  }
+
   function executeCommand(rawCmd) {
+    if (isTypingOutput) return; // Prevent overlapping runs
     const cmd = rawCmd.trim().toLowerCase();
     if (!cmd) return;
 
@@ -312,30 +521,14 @@ function initTerminal() {
       return;
     }
 
-    const outputDiv = document.createElement('div');
-    outputDiv.style.opacity = '0';
+    isTypingOutput = true;
+    const lines = commands[cmd] ? commands[cmd]() : [
+      `<span class="term-dim">Command not found: "${escapeHtml(rawCmd)}". Type <span class="term-yellow">help</span> for valid commands.</span>`
+    ];
 
-    if (commands[cmd]) {
-      outputDiv.innerHTML = commands[cmd]();
-    } else {
-      outputDiv.innerHTML = `<div class="term-line term-dim">Command not found: "${escapeHtml(rawCmd)}". Type <span class="term-yellow">help</span> for a list of valid commands.</div>`;
-    }
-
-    terminalScreen.appendChild(outputDiv);
-
-    if (typeof anime !== 'undefined') {
-      anime({
-        targets: outputDiv,
-        opacity: [0, 1],
-        translateY: [6, 0],
-        duration: 250,
-        easing: 'easeOutQuad'
-      });
-    } else {
-      outputDiv.style.opacity = '1';
-    }
-
-    terminalScreen.scrollTop = terminalScreen.scrollHeight;
+    streamLines(lines, () => {
+      terminalScreen.scrollTop = terminalScreen.scrollHeight;
+    });
   }
 
   if (termForm) {
@@ -343,6 +536,7 @@ function initTerminal() {
       e.preventDefault();
       const val = termInput.value;
       termInput.value = '';
+      updateCursorTrail();
       executeCommand(val);
     });
   }

@@ -1,6 +1,6 @@
 /* ==========================================================================
    NEOBRUTALISM DESIGN SYSTEM — EMMANUEL JOHN PEREZ (ejhay26)
-   Handcrafted with zero bloat. High contrast, hard shadows, tactile physics.
+   Enhanced: Zero Emojis, No-Select, GPU Trailing Cursor & Midnight Blue Sky
    ========================================================================== */
 
 :root {
@@ -15,7 +15,7 @@
   --color-white: #FFFFFF;
   --color-black: #0E0F12;
 
-  /* Theme Tokens (Default: Light Mode) */
+  /* Day Paper Theme Tokens (Default) */
   --bg-page: #F6F3EB;
   --bg-dots: rgba(0, 0, 0, 0.08);
   --text-main: #0E0F12;
@@ -34,22 +34,45 @@
   --transition-tactile: transform 0.12s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.12s cubic-bezier(0.2, 0, 0, 1);
 }
 
+/* ==========================================================================
+   MIDNIGHT BLUE NIGHT SKY THEME (DARK MODE)
+   Deep navy/blue with stars, crescent moon, and drifting neobrutalist clouds
+   ========================================================================== */
 [data-theme="dark"] {
-  --bg-page: #0C0D10;
-  --bg-dots: rgba(255, 255, 255, 0.08);
-  --text-main: #F4F4F5;
-  --text-muted: #9CA3AF;
-  --border-color: #F4F4F5;
-  --shadow-color: #A3E635;
-  --card-bg: #16181D;
-  --card-bg-subtle: #1F2229;
+  --bg-page: #080E21;
+  --bg-dots: rgba(56, 189, 248, 0.08);
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --border-color: #38BDF8;
+  --shadow-color: #020617;
+  --card-bg: #101B3B;
+  --card-bg-subtle: #172652;
+  --color-yellow: #FDE047;
+  --color-lime: #4ADE80;
+  --color-pink: #F472B6;
 }
 
-/* Base Reset & Typography */
-* {
+/* ==========================================================================
+   GLOBAL RESET & SELECTION PREVENTION
+   Strictly disable text highlight, selection, and drag
+   ========================================================================== */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Allow text input interaction for the interactive terminal */
+input, textarea {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 html {
@@ -63,8 +86,10 @@ body {
   line-height: 1.5;
   background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
   background-size: 24px 24px;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.4s ease, color 0.4s ease;
   overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
 }
 
 .container {
@@ -73,11 +98,105 @@ body {
   margin-right: auto;
   padding-left: 24px;
   padding-right: 24px;
+  position: relative;
+  z-index: 2;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* ==========================================================================
+   NIGHT SKY AMBIENT LAYER (CANVAS, MOON, CLOUDS)
+   ========================================================================== */
+.night-sky-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+[data-theme="dark"] .night-sky-layer {
+  opacity: 1;
+}
+
+#stars-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Neobrutalist Crescent Moon */
+.brutal-crescent-moon {
+  position: absolute;
+  top: 70px;
+  right: 60px;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 14px 14px 0 0 #FDE047;
+  filter: drop-shadow(4px 4px 0px #020617);
+  transform: rotate(-18deg);
+  transition: transform 0.3s ease;
+}
+
+.brutal-crescent-moon:hover {
+  transform: rotate(0deg) scale(1.1);
+}
+
+/* Drifting Brutalist Clouds */
+.clouds-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.brutal-cloud {
+  position: absolute;
+  background-color: #1E293B;
+  border: 2px solid #38BDF8;
+  box-shadow: 4px 4px 0px #020617;
+  border-radius: 20px;
+  opacity: 0.6;
+}
+
+.cloud-1 {
+  width: 140px;
+  height: 38px;
+  top: 140px;
+  left: -160px;
+  animation: drift 55s linear infinite;
+}
+
+.cloud-2 {
+  width: 200px;
+  height: 48px;
+  top: 320px;
+  left: -220px;
+  animation: drift 75s linear infinite 15s;
+}
+
+.cloud-3 {
+  width: 160px;
+  height: 42px;
+  top: 560px;
+  left: -180px;
+  animation: drift 65s linear infinite 30s;
+}
+
+@keyframes drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw + 300px)); }
 }
 
 /* ==========================================================================
@@ -112,7 +231,6 @@ a {
   cursor: pointer;
   text-decoration: none;
   transition: var(--transition-tactile);
-  user-select: none;
 }
 
 .brutal-btn:hover {
@@ -145,6 +263,7 @@ a {
 
 [data-theme="dark"] .btn-accent {
   background-color: var(--color-lime);
+  color: #000;
 }
 
 /* Sticker Badges & Pills */
@@ -184,6 +303,14 @@ a {
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.05em;
+  position: relative;
+  z-index: 10;
+}
+
+[data-theme="dark"] .top-marquee {
+  background-color: #030712;
+  color: #38BDF8;
+  border-color: #38BDF8;
 }
 
 .marquee-track {
@@ -211,6 +338,7 @@ a {
   background-color: var(--bg-page);
   border-bottom: var(--border-width) solid var(--border-color);
   padding: 12px 0;
+  backdrop-filter: blur(8px);
 }
 
 .header-inner {
@@ -251,7 +379,7 @@ a {
   border-radius: var(--radius-pill);
 }
 
-.status-dot {
+.status-indicator {
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -370,22 +498,20 @@ a {
   font-size: 0.9rem;
 }
 
-.window-dots {
+.header-tags {
   display: flex;
   gap: 6px;
 }
 
-.window-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+.spec-mini-tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--card-bg-subtle);
   border: 1.5px solid var(--border-color);
-  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 2px;
 }
-
-.window-dot.red    { background-color: #EF4444; }
-.window-dot.yellow { background-color: #F59E0B; }
-.window-dot.green  { background-color: #10B981; }
 
 .spec-card-body {
   display: flex;
@@ -455,6 +581,8 @@ a {
   color: #000;
   padding: 12px 0;
   transform: rotate(-1.2deg) scale(1.03);
+  position: relative;
+  z-index: 5;
 }
 
 .ribbon-text {
@@ -472,7 +600,7 @@ a {
 }
 
 /* ==========================================================================
-   FEATURED PROJECTS SECTION
+   FEATURED PROJECTS SECTION (BIDIRECTIONAL SCROLL TRANSITIONS)
    ========================================================================== */
 .section-work {
   padding-bottom: 80px;
@@ -608,6 +736,17 @@ a {
   font-size: 0.92rem;
 }
 
+.highlight-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: var(--border-color);
+  color: var(--bg-page);
+  padding: 1px 5px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
 .tech-pill-list {
   display: flex;
   flex-wrap: wrap;
@@ -642,7 +781,7 @@ a {
 }
 
 /* ==========================================================================
-   TINKER TERMINAL PLAYGROUND
+   TINKER TERMINAL & GPU TRAILING CURSOR
    ========================================================================== */
 .section-terminal {
   padding-bottom: 80px;
@@ -656,8 +795,8 @@ a {
 }
 
 .terminal-window {
-  background-color: #0A0A0C;
-  color: #F4F4F5;
+  background-color: #050811;
+  color: #F8FAFC;
   border-color: var(--border-color);
   box-shadow: 8px 8px 0px var(--shadow-color);
   overflow: hidden;
@@ -667,16 +806,31 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #1A1A1E;
+  background-color: #0E162B;
   padding: 12px 18px;
-  border-bottom: 2px solid #2E2E36;
+  border-bottom: 2px solid #1E293B;
 }
 
 .terminal-title {
   font-family: var(--font-mono);
   font-size: 0.85rem;
   font-weight: 700;
-  color: #D4D4D8;
+  color: #E2E8F0;
+}
+
+.window-decorations {
+  display: flex;
+  gap: 6px;
+}
+
+.terminal-pill-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  background-color: #1E293B;
+  color: #94A3B8;
+  padding: 2px 6px;
+  border-radius: 2px;
 }
 
 .terminal-mode {
@@ -692,8 +846,8 @@ a {
   padding: 24px;
   font-family: var(--font-mono);
   font-size: 0.9rem;
-  min-height: 220px;
-  max-height: 380px;
+  min-height: 240px;
+  max-height: 400px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -709,7 +863,7 @@ a {
 .term-yellow { color: #FACC15; font-weight: 700; }
 .term-cyan   { color: #38BDF8; font-weight: 700; }
 .term-pink   { color: #F472B6; font-weight: 700; }
-.term-dim    { color: #71717A; }
+.term-dim    { color: #64748B; }
 
 .terminal-shortcuts {
   display: flex;
@@ -717,22 +871,22 @@ a {
   flex-wrap: wrap;
   gap: 8px;
   padding: 12px 24px;
-  background-color: #121216;
-  border-top: 1px solid #27272A;
-  border-bottom: 1px solid #27272A;
+  background-color: #0B1224;
+  border-top: 1px solid #1E293B;
+  border-bottom: 1px solid #1E293B;
 }
 
 .shortcuts-label {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 700;
-  color: #A1A1AA;
+  color: #94A3B8;
 }
 
 .term-chip {
-  background-color: #27272A;
-  color: #FAFAFA;
-  border: 1px solid #3F3F46;
+  background-color: #1E293B;
+  color: #F8FAFC;
+  border: 1px solid #334155;
   padding: 4px 10px;
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -752,7 +906,8 @@ a {
   align-items: center;
   gap: 12px;
   padding: 12px 20px;
-  background-color: #0E0F12;
+  background-color: #050811;
+  position: relative;
 }
 
 .term-prompt {
@@ -762,14 +917,42 @@ a {
   color: var(--color-lime);
 }
 
-.term-input {
+.term-input-wrapper {
+  position: relative;
   flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.term-input {
+  width: 100%;
   background: transparent;
   border: none;
   color: #FFFFFF;
   font-family: var(--font-mono);
   font-size: 0.9rem;
   outline: none;
+  caret-color: transparent; /* We render the GPU spring trail cursor! */
+  z-index: 2;
+}
+
+/* GPU Accelerated Trailing Cursor (Ghostty / Neovide style) */
+.gpu-cursor-trail {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 9px;
+  height: 18px;
+  background-color: var(--color-lime);
+  pointer-events: none;
+  z-index: 1;
+  box-shadow: 0 0 10px var(--color-lime);
+  transition: transform 0.08s cubic-bezier(0.2, 0.9, 0.3, 1.2), width 0.1s ease;
+  animation: cursor-blink 1s step-start infinite;
+}
+
+@keyframes cursor-blink {
+  50% { opacity: 0.3; }
 }
 
 /* ==========================================================================
@@ -798,8 +981,19 @@ a {
   border-bottom: 2px solid var(--border-color);
 }
 
-.category-icon {
-  font-size: 1.5rem;
+.category-badge {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.85rem;
+  background: #000;
+  color: #FFF;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+[data-theme="dark"] .category-badge {
+  background: #38BDF8;
+  color: #000;
 }
 
 .category-name {
@@ -910,6 +1104,8 @@ a {
   border-top: var(--border-width) solid var(--border-color);
   padding: 32px 24px;
   margin-bottom: 24px;
+  position: relative;
+  z-index: 5;
 }
 
 .footer-inner {
@@ -960,5 +1156,11 @@ a {
   }
   .contact-stamp {
     align-self: flex-start;
+  }
+  .brutal-crescent-moon {
+    width: 50px;
+    height: 50px;
+    top: 60px;
+    right: 20px;
   }
 }
