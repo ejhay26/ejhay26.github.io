@@ -11,18 +11,103 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="light">
-  <!-- Night Sky Ambient Canvas & Scenic Elements (Active in Dark Mode) -->
-  <div id="night-sky-layer" class="night-sky-layer" aria-hidden="true">
+  <!-- Dynamic Sky Environment (Day Sun & Puffy Clouds <-> Night Moon & Stars) -->
+  <div id="sky-environment" class="sky-environment" aria-hidden="true">
+    <!-- Starfield Canvas (Night Mode Only) -->
     <canvas id="stars-canvas"></canvas>
-    <div class="brutal-crescent-moon">
-      <div class="moon-body"></div>
-      <div class="moon-crater c1"></div>
-      <div class="moon-crater c2"></div>
+
+    <!-- Celestial Orbital Stage (Sun / Moon Exchange) -->
+    <div class="celestial-stage">
+      <!-- Neobrutalist Sun (Day Mode Active) -->
+      <div id="celestial-sun" class="celestial-body brutal-sun" title="Daylight Sun">
+        <div class="sun-core"></div>
+        <div class="sun-rays-ring">
+          <span class="sun-ray r1"></span>
+          <span class="sun-ray r2"></span>
+          <span class="sun-ray r3"></span>
+          <span class="sun-ray r4"></span>
+          <span class="sun-ray r5"></span>
+          <span class="sun-ray r6"></span>
+          <span class="sun-ray r7"></span>
+          <span class="sun-ray r8"></span>
+        </div>
+      </div>
+
+      <!-- Neobrutalist Crescent Moon (Night Mode Active) -->
+      <div id="celestial-moon" class="celestial-body brutal-moon" title="Midnight Crescent Moon">
+        <svg class="moon-svg" viewBox="0 0 80 80" width="76" height="76">
+          <!-- Handcrafted Neobrutalist Crescent Moon -->
+          <path d="M 40,6 
+                   A 34,34 0 1,0 74,40 
+                   A 27,27 0 1,1 40,6 
+                   Z" 
+                class="moon-path" />
+          <circle cx="28" cy="36" r="4.5" class="moon-crater" />
+          <circle cx="38" cy="50" r="3" class="moon-crater" />
+        </svg>
+      </div>
     </div>
-    <div class="clouds-container">
-      <div class="brutal-cloud cloud-1"></div>
-      <div class="brutal-cloud cloud-2"></div>
-      <div class="brutal-cloud cloud-3"></div>
+
+    <!-- Childhood Classic Puffy Clouds Layer -->
+    <div class="clouds-layer">
+      <!-- Cloud 1: High Altitude / Fast -->
+      <div class="puffy-cloud-box cloud-1">
+        <svg class="puffy-cloud-svg" viewBox="0 0 160 90">
+          <path d="M 32,74 
+                   L 126,74 
+                   A 18,18 0 0,0 144,56 
+                   A 20,20 0 0,0 124,36 
+                   A 34,34 0 0,0 62,32 
+                   A 24,24 0 0,0 20,54 
+                   A 18,18 0 0,0 32,74 
+                   Z" 
+                class="cloud-path" />
+        </svg>
+      </div>
+
+      <!-- Cloud 2: Main Middle Altitude / Grand Puffy -->
+      <div class="puffy-cloud-box cloud-2">
+        <svg class="puffy-cloud-svg" viewBox="0 0 160 90">
+          <path d="M 32,74 
+                   L 126,74 
+                   A 18,18 0 0,0 144,56 
+                   A 20,20 0 0,0 124,36 
+                   A 34,34 0 0,0 62,32 
+                   A 24,24 0 0,0 20,54 
+                   A 18,18 0 0,0 32,74 
+                   Z" 
+                class="cloud-path" />
+        </svg>
+      </div>
+
+      <!-- Cloud 3: Lower Altitude / Soft Drifter -->
+      <div class="puffy-cloud-box cloud-3">
+        <svg class="puffy-cloud-svg" viewBox="0 0 160 90">
+          <path d="M 32,74 
+                   L 126,74 
+                   A 18,18 0 0,0 144,56 
+                   A 20,20 0 0,0 124,36 
+                   A 34,34 0 0,0 62,32 
+                   A 24,24 0 0,0 20,54 
+                   A 18,18 0 0,0 32,74 
+                   Z" 
+                class="cloud-path" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Daylight Soaring Birds (Visible in Light Mode) -->
+    <div class="daylight-birds" id="daylight-birds">
+      <div class="brutal-bird bird-1">
+        <svg viewBox="0 0 40 20" width="36" height="18">
+          <path d="M 2,14 Q 10,2 20,10 Q 30,2 38,14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="brutal-bird bird-2">
+        <svg viewBox="0 0 40 20" width="28" height="14">
+          <path d="M 2,14 Q 10,2 20,10 Q 30,2 38,14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+        </svg>
+      </div>
     </div>
   </div>
 
@@ -35,14 +120,14 @@
       <span>// ANGULAR 20 &amp; IONIC 8</span>
       <span>// HYPRLAND &amp; NIRI WAYLAND</span>
       <span>// SINE MDRRMO CAPSTONE</span>
-      <span>// BIDIRECTIONAL ANIME.JS MOTION</span>
+      <span>// CELESTIAL ORBITAL CYCLE MOTION</span>
       <span>// ZERO AI SLOP :: HANDCRAFTED CODE</span>
       <span>// TAURI v2 &amp; RUST CORE</span>
       <span>// LARAVEL 13 &amp; REVERB WEBSOCKETS</span>
       <span>// ANGULAR 20 &amp; IONIC 8</span>
       <span>// HYPRLAND &amp; NIRI WAYLAND</span>
       <span>// SINE MDRRMO CAPSTONE</span>
-      <span>// BIDIRECTIONAL ANIME.JS MOTION</span>
+      <span>// CELESTIAL ORBITAL CYCLE MOTION</span>
     </div>
   </aside>
 
@@ -54,9 +139,9 @@
         <span class="logo-text">ejhay26.dev</span>
       </a>
 
-      <div class="header-status">
-        <span class="status-indicator"></span>
-        <span class="status-text">OPEN FOR ROLES &amp; COLLABS</span>
+      <div class="header-telemetry" id="header-telemetry">
+        <span class="telemetry-dot"></span>
+        <span class="telemetry-text" id="telemetry-text">SOL // ZENITH 12:00</span>
       </div>
 
       <nav class="nav-links">
@@ -66,7 +151,8 @@
         <a href="#contact" class="nav-link">CONTACT</a>
       </nav>
 
-      <button id="theme-toggle" class="brutal-btn btn-sm btn-accent" aria-label="Toggle visual theme">
+      <!-- Celestial Theme Toggle Button -->
+      <button id="theme-toggle" class="brutal-btn btn-sm btn-accent" aria-label="Toggle celestial day and night theme">
         <span class="theme-icon">[M]</span>
         <span class="theme-label">NIGHT SKY</span>
       </button>
@@ -399,7 +485,7 @@
           <button class="term-chip" data-cmd="neofetch">neofetch</button>
           <button class="term-chip" data-cmd="cat stack.json">cat stack.json</button>
           <button class="term-chip" data-cmd="capstone --stat">capstone --stat</button>
-          <button class="term-chip" data-cmd="philosophy">philosophy</button>
+          <button class="term-chip" data-cmd="celestial">celestial</button>
           <button class="term-chip" data-cmd="clear">clear</button>
         </div>
 

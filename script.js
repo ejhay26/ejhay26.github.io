@@ -1,6 +1,6 @@
 /**
  * EMMANUEL JOHN PEREZ (ejhay26) — PORTFOLIO CONTROLLER
- * Enhanced: Bidirectional Scroll, GPU Trailing Cursor, Typewriter CLI & Night Sky Canvas
+ * Enhanced: Celestial Sun/Moon Orbital Cycle, Puffy Clouds & Night Starfield
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroAnimations();
   initBidirectionalScroll();
   initProjectFilters();
-  initThemeToggle();
+  initCelestialCycle();
   initNightSkyCanvas();
   initTerminal();
 });
@@ -17,13 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
    1. DISABLE RIGHT-CLICK & SELECTION
    ========================================================================== */
 function initSecurityAndSelection() {
-  // Prevent context menu (right click)
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     return false;
   });
 
-  // Prevent dragging of any element or link
   document.addEventListener('dragstart', (e) => {
     e.preventDefault();
     return false;
@@ -87,7 +85,7 @@ function initHeroAnimations() {
     easing: 'easeOutQuad'
   });
 
-  // Subtle interactive mouse parallax on hero cards
+  // Interactive mouse parallax on hero spec card
   const heroCard = document.querySelector('.spec-card');
   if (heroCard) {
     document.addEventListener('mousemove', (e) => {
@@ -117,7 +115,6 @@ function initBidirectionalScroll() {
       const el = entry.target;
 
       if (entry.isIntersecting) {
-        // Entering viewport (whether scrolling down or up)
         const fromY = isScrollingDown ? 45 : -45;
         anime.remove(el);
         anime({
@@ -129,7 +126,6 @@ function initBidirectionalScroll() {
           easing: 'easeOutCubic'
         });
 
-        // Stamp badge physics
         const stamp = el.querySelector('.contact-stamp, .stamp-badge');
         if (stamp) {
           const rot = parseFloat(stamp.getAttribute('data-rotate')) || 0;
@@ -143,7 +139,6 @@ function initBidirectionalScroll() {
           });
         }
       } else {
-        // Exiting viewport
         const toY = isScrollingDown ? -30 : 30;
         anime.remove(el);
         anime({
@@ -180,7 +175,6 @@ function initProjectFilters() {
 
       const filterValue = btn.getAttribute('data-filter');
 
-      // Animate filter button punch
       if (typeof anime !== 'undefined') {
         anime({
           targets: btn,
@@ -216,60 +210,124 @@ function initProjectFilters() {
 }
 
 /* ==========================================================================
-   5. THEME TOGGLE: MIDNIGHT BLUE NIGHT SKY vs DAY PAPER
+   5. CELESTIAL ORBITAL CYCLE (SUN <-> MOON EXCHANGE)
    ========================================================================== */
-function initThemeToggle() {
+function initCelestialCycle() {
   const toggleBtn = document.getElementById('theme-toggle');
+  const sunEl = document.getElementById('celestial-sun');
+  const moonEl = document.getElementById('celestial-moon');
+  const telemetryText = document.getElementById('telemetry-text');
+
   if (!toggleBtn) return;
 
   const themeLabel = toggleBtn.querySelector('.theme-label');
   const themeIcon = toggleBtn.querySelector('.theme-icon');
 
   const savedTheme = localStorage.getItem('ejhay26_theme') || 'light';
-  applyTheme(savedTheme);
+  applyThemeState(savedTheme, false);
 
   toggleBtn.addEventListener('click', () => {
     const currentTheme = document.body.getAttribute('data-theme') || 'light';
     const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
-    applyTheme(nextTheme);
+    applyThemeState(nextTheme, true);
     localStorage.setItem('ejhay26_theme', nextTheme);
-
-    if (typeof anime !== 'undefined') {
-      anime({
-        targets: toggleBtn,
-        rotate: '+=360deg',
-        scale: [0.88, 1],
-        duration: 500,
-        easing: 'easeOutElastic(1, .6)'
-      });
-
-      // Animate the crescent moon on night switch
-      if (nextTheme === 'dark') {
-        anime({
-          targets: '.brutal-crescent-moon',
-          scale: [0, 1],
-          rotate: [-60, -18],
-          duration: 900,
-          easing: 'easeOutElastic(1, .5)'
-        });
-      }
-    }
   });
 
-  function applyTheme(theme) {
+  function applyThemeState(theme, animate) {
     document.body.setAttribute('data-theme', theme);
+
     if (theme === 'dark') {
       themeLabel.textContent = 'DAY PAPER';
       themeIcon.textContent = '[D]';
+      if (telemetryText) telemetryText.textContent = 'LUNAR // PHASE WAXING';
+
+      if (animate && typeof anime !== 'undefined') {
+        // Toggle button spin
+        anime({
+          targets: toggleBtn,
+          rotate: '+=360deg',
+          scale: [0.88, 1],
+          duration: 500,
+          easing: 'easeOutElastic(1, .6)'
+        });
+
+        // Sun sets below horizon
+        anime({
+          targets: sunEl,
+          translateY: [0, 150],
+          rotate: [0, 120],
+          scale: [1, 0.4],
+          opacity: [1, 0],
+          duration: 600,
+          easing: 'easeInBack'
+        });
+
+        // Moon rises from horizon
+        anime({
+          targets: moonEl,
+          translateY: [150, 0],
+          rotate: [-60, 0],
+          scale: [0.4, 1],
+          opacity: [0, 1],
+          duration: 850,
+          delay: 200,
+          easing: 'easeOutElastic(1, .6)'
+        });
+      } else {
+        // Instant layout
+        sunEl.style.transform = 'translateY(150px) scale(0.4)';
+        sunEl.style.opacity = '0';
+        moonEl.style.transform = 'translateY(0px) scale(1)';
+        moonEl.style.opacity = '1';
+      }
     } else {
       themeLabel.textContent = 'NIGHT SKY';
       themeIcon.textContent = '[M]';
+      if (telemetryText) telemetryText.textContent = 'SOL // ZENITH 12:00';
+
+      if (animate && typeof anime !== 'undefined') {
+        anime({
+          targets: toggleBtn,
+          rotate: '+=360deg',
+          scale: [0.88, 1],
+          duration: 500,
+          easing: 'easeOutElastic(1, .6)'
+        });
+
+        // Moon sets below horizon
+        anime({
+          targets: moonEl,
+          translateY: [0, 150],
+          rotate: [0, 60],
+          scale: [1, 0.4],
+          opacity: [1, 0],
+          duration: 600,
+          easing: 'easeInBack'
+        });
+
+        // Sun rises with spinning rays
+        anime({
+          targets: sunEl,
+          translateY: [150, 0],
+          rotate: [-120, 0],
+          scale: [0.4, 1],
+          opacity: [0, 1],
+          duration: 900,
+          delay: 200,
+          easing: 'easeOutElastic(1, .6)'
+        });
+      } else {
+        moonEl.style.transform = 'translateY(150px) scale(0.4)';
+        moonEl.style.opacity = '0';
+        sunEl.style.transform = 'translateY(0px) scale(1)';
+        sunEl.style.opacity = '1';
+      }
     }
   }
 }
 
 /* ==========================================================================
-   6. NIGHT SKY CANVAS: TWINKLING STARS & SPARKLES
+   6. NIGHT SKY CANVAS: TWINKLING STARS
    ========================================================================== */
 function initNightSkyCanvas() {
   const canvas = document.getElementById('stars-canvas');
@@ -294,7 +352,7 @@ function initNightSkyCanvas() {
         size: Math.random() * 2.5 + 1,
         alpha: Math.random() * 0.8 + 0.2,
         twinkleSpeed: (Math.random() * 0.03 + 0.01) * (Math.random() > 0.5 ? 1 : -1),
-        isCross: Math.random() > 0.85 // 15% are stylized cross/diamond stars
+        isCross: Math.random() > 0.85
       });
     }
   }
@@ -303,7 +361,6 @@ function initNightSkyCanvas() {
   window.addEventListener('resize', resize);
 
   function render() {
-    // Only animate if in dark mode
     if (document.body.getAttribute('data-theme') === 'dark') {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -316,7 +373,6 @@ function initNightSkyCanvas() {
         ctx.fillStyle = `rgba(248, 250, 252, ${s.alpha})`;
 
         if (s.isCross) {
-          // Brutalist 4-point star
           ctx.beginPath();
           const sz = s.size * 2.2;
           ctx.moveTo(s.x, s.y - sz);
@@ -330,7 +386,6 @@ function initNightSkyCanvas() {
           ctx.closePath();
           ctx.fill();
         } else {
-          // Pixel diamond star
           ctx.fillRect(s.x, s.y, s.size, s.size);
         }
       });
@@ -364,7 +419,7 @@ function initTerminal() {
     });
   }
 
-  // --- GPU Accelerated Trailing Cursor Calculation (Ghostty / Neovide style) ---
+  // --- GPU Trailing Cursor Metric Mirror ---
   const textRuler = document.createElement('span');
   textRuler.style.visibility = 'hidden';
   textRuler.style.position = 'absolute';
@@ -379,10 +434,8 @@ function initTerminal() {
     textRuler.textContent = textBeforeCaret;
     const measuredWidth = textRuler.getBoundingClientRect().width;
 
-    // Smooth spring transform
     cursorTrail.style.transform = `translateX(${measuredWidth}px)`;
 
-    // Subtle momentary stretch when moving fast
     cursorTrail.style.width = '12px';
     clearTimeout(cursorTrail._stretchTimer);
     cursorTrail._stretchTimer = setTimeout(() => {
@@ -403,13 +456,14 @@ function initTerminal() {
     });
   }
 
-  // --- Terminal Command Library (Zero Emojis) ---
+  // --- Terminal Command Library ---
   const commands = {
     help: () => [
       `<span class="term-green">AVAILABLE COMMANDS:</span>`,
       `  <span class="term-yellow">neofetch</span>        - Display system & developer specifications`,
       `  <span class="term-yellow">cat stack.json</span>  - Dump full toolchain & platform breakdown`,
       `  <span class="term-yellow">capstone --stat</span> - Show SINE MDRRMO flagship details`,
+      `  <span class="term-yellow">celestial</span>       - Realtime astronomical & atmospheric status`,
       `  <span class="term-yellow">philosophy</span>      - Architecture tenets & craft ethos`,
       `  <span class="term-yellow">whoami</span>          - Identity coordinates`,
       `  <span class="term-yellow">contact</span>         - Direct transmission channel`,
@@ -431,6 +485,17 @@ function initTerminal() {
       `<span class="term-pink">Editor:</span> Neovim + VSCode`,
       `<span class="term-pink">Core Stack:</span> Rust, Laravel 13, Angular 20, Tauri v2`
     ],
+
+    celestial: () => {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      return [
+        `<span class="term-green">ATMOSPHERIC TELEMETRY:</span>`,
+        `  [+] State: <span class="term-yellow">${isDark ? 'NIGHT SKY (LUNAR)' : 'DAY PAPER (SOL)'}</span>`,
+        `  [+] Celestial Body: ${isDark ? 'Crescent Moon + 130 Twinkling Stars' : 'Golden Rotating Sun + Gliding Birds'}`,
+        `  [+] Cloud Formations: 3 Classic Childhood Multi-Dome Puffy Clouds`,
+        `  [+] Orbit Status: Synchronous cycle driven by Anime.js timeline`
+      ];
+    },
 
     'cat stack.json': () => [
       `<span class="term-yellow">{</span>`,
@@ -468,7 +533,6 @@ function initTerminal() {
     ]
   };
 
-  // Typewriter Stream Effect
   function streamLines(lines, onComplete) {
     let lineIndex = 0;
 
@@ -484,7 +548,6 @@ function initTerminal() {
       lineDiv.className = 'term-line';
       terminalScreen.appendChild(lineDiv);
 
-      // Fast typing cadence per line
       lineDiv.innerHTML = rawHtml;
 
       if (typeof anime !== 'undefined') {
@@ -506,11 +569,10 @@ function initTerminal() {
   }
 
   function executeCommand(rawCmd) {
-    if (isTypingOutput) return; // Prevent overlapping runs
+    if (isTypingOutput) return;
     const cmd = rawCmd.trim().toLowerCase();
     if (!cmd) return;
 
-    // Echo command
     const echoDiv = document.createElement('div');
     echoDiv.className = 'term-line';
     echoDiv.innerHTML = `<span class="term-green">ejhay26@box:~$</span> <span style="color:#FFF;">${escapeHtml(rawCmd)}</span>`;
