@@ -210,12 +210,12 @@ function initProjectFilters() {
 }
 
 /* ==========================================================================
-   5. CELESTIAL ORBITAL CYCLE (SUN <-> MOON EXCHANGE)
+   5. CELESTIAL HORIZON ORBIT CYCLE (INSPIRED BY THE DRIBBBLE GIF)
    ========================================================================== */
 function initCelestialCycle() {
   const toggleBtn = document.getElementById('theme-toggle');
-  const sunEl = document.getElementById('celestial-sun');
-  const moonEl = document.getElementById('celestial-moon');
+  const horizonWidget = document.getElementById('horizon-widget');
+  const orbitTrack = document.getElementById('orbit-track');
   const telemetryText = document.getElementById('telemetry-text');
 
   if (!toggleBtn) return;
@@ -226,12 +226,17 @@ function initCelestialCycle() {
   const savedTheme = localStorage.getItem('ejhay26_theme') || 'light';
   applyThemeState(savedTheme, false);
 
-  toggleBtn.addEventListener('click', () => {
+  function cycleTheme() {
     const currentTheme = document.body.getAttribute('data-theme') || 'light';
     const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
     applyThemeState(nextTheme, true);
     localStorage.setItem('ejhay26_theme', nextTheme);
-  });
+  }
+
+  toggleBtn.addEventListener('click', cycleTheme);
+  if (horizonWidget) {
+    horizonWidget.addEventListener('click', cycleTheme);
+  }
 
   function applyThemeState(theme, animate) {
     document.body.setAttribute('data-theme', theme);
@@ -251,36 +256,15 @@ function initCelestialCycle() {
           easing: 'easeOutElastic(1, .6)'
         });
 
-        // Sun sets along an arched curve downwards and to the side
+        // Orbit track rotates: Sun curves down sideways behind horizon, Moon curves up
         anime({
-          targets: sunEl,
-          translateX: [0, 160],
-          translateY: [0, 220],
-          rotate: [0, 180],
-          scale: [1, 0.3],
-          opacity: [1, 0],
-          duration: 800,
-          easing: 'cubicBezier(0.4, 0, 0.7, 0.2)'
-        });
-
-        // Moon rises from opposite side upwards along an arc into the sky
-        anime({
-          targets: moonEl,
-          translateX: [-160, 0],
-          translateY: [220, 0],
-          rotate: [-90, 0],
-          scale: [0.3, 1],
-          opacity: [0, 1],
+          targets: orbitTrack,
+          rotate: 180,
           duration: 950,
-          delay: 160,
-          easing: 'cubicBezier(0.2, 0.9, 0.3, 1.2)'
+          easing: 'cubicBezier(0.34, 1.25, 0.64, 1)'
         });
-      } else {
-        // Instant layout
-        sunEl.style.transform = 'translate(160px, 220px) scale(0.3)';
-        sunEl.style.opacity = '0';
-        moonEl.style.transform = 'translate(0px, 0px) scale(1)';
-        moonEl.style.opacity = '1';
+      } else if (orbitTrack) {
+        orbitTrack.style.transform = 'rotate(180deg)';
       }
     } else {
       themeLabel.textContent = 'NIGHT SKY';
@@ -296,35 +280,15 @@ function initCelestialCycle() {
           easing: 'easeOutElastic(1, .6)'
         });
 
-        // Moon sets downwards sideways along an arc
+        // Orbit track rotates back: Moon curves down sideways behind horizon, Sun curves up
         anime({
-          targets: moonEl,
-          translateX: [0, 160],
-          translateY: [0, 220],
-          rotate: [0, 120],
-          scale: [1, 0.3],
-          opacity: [1, 0],
-          duration: 800,
-          easing: 'cubicBezier(0.4, 0, 0.7, 0.2)'
-        });
-
-        // Sun rises from opposite side upwards along an arc with spinning rays
-        anime({
-          targets: sunEl,
-          translateX: [-160, 0],
-          translateY: [220, 0],
-          rotate: [-180, 0],
-          scale: [0.3, 1],
-          opacity: [0, 1],
+          targets: orbitTrack,
+          rotate: 0,
           duration: 950,
-          delay: 160,
-          easing: 'cubicBezier(0.2, 0.9, 0.3, 1.2)'
+          easing: 'cubicBezier(0.34, 1.25, 0.64, 1)'
         });
-      } else {
-        moonEl.style.transform = 'translate(160px, 220px) scale(0.3)';
-        moonEl.style.opacity = '0';
-        sunEl.style.transform = 'translate(0px, 0px) scale(1)';
-        sunEl.style.opacity = '1';
+      } else if (orbitTrack) {
+        orbitTrack.style.transform = 'rotate(0deg)';
       }
     }
   }

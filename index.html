@@ -11,104 +11,9 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="light">
-  <!-- Dynamic Sky Environment (Day Sun & Puffy Clouds <-> Night Moon & Stars) -->
-  <div id="sky-environment" class="sky-environment" aria-hidden="true">
-    <!-- Starfield Canvas (Night Mode Only) -->
+  <!-- Ambient Starfield Canvas (Night Mode Only) -->
+  <div class="stars-backdrop" aria-hidden="true">
     <canvas id="stars-canvas"></canvas>
-
-    <!-- Celestial Orbital Stage (Sun / Moon Exchange) -->
-    <div class="celestial-stage">
-      <!-- Neobrutalist Sun (Day Mode Active) -->
-      <div id="celestial-sun" class="celestial-body brutal-sun" title="Daylight Sun">
-        <div class="sun-core"></div>
-        <div class="sun-rays-ring">
-          <span class="sun-ray r1"></span>
-          <span class="sun-ray r2"></span>
-          <span class="sun-ray r3"></span>
-          <span class="sun-ray r4"></span>
-          <span class="sun-ray r5"></span>
-          <span class="sun-ray r6"></span>
-          <span class="sun-ray r7"></span>
-          <span class="sun-ray r8"></span>
-        </div>
-      </div>
-
-      <!-- Neobrutalist Crescent Moon (Night Mode Active) -->
-      <div id="celestial-moon" class="celestial-body brutal-moon" title="Midnight Crescent Moon">
-        <svg class="moon-svg" viewBox="0 0 80 80" width="76" height="76">
-          <!-- Handcrafted Neobrutalist Crescent Moon -->
-          <path d="M 40,6 
-                   A 34,34 0 1,0 74,40 
-                   A 27,27 0 1,1 40,6 
-                   Z" 
-                class="moon-path" />
-          <circle cx="28" cy="36" r="4.5" class="moon-crater" />
-          <circle cx="38" cy="50" r="3" class="moon-crater" />
-        </svg>
-      </div>
-    </div>
-
-    <!-- Childhood Classic Puffy Clouds Layer -->
-    <div class="clouds-layer">
-      <!-- Cloud 1: High Altitude / Fast -->
-      <div class="puffy-cloud-box cloud-1">
-        <svg class="puffy-cloud-svg" viewBox="0 0 160 90">
-          <path d="M 32,74 
-                   L 126,74 
-                   A 18,18 0 0,0 144,56 
-                   A 20,20 0 0,0 124,36 
-                   A 34,34 0 0,0 62,32 
-                   A 24,24 0 0,0 20,54 
-                   A 18,18 0 0,0 32,74 
-                   Z" 
-                class="cloud-path" />
-        </svg>
-      </div>
-
-      <!-- Cloud 2: Main Middle Altitude / Grand Puffy -->
-      <div class="puffy-cloud-box cloud-2">
-        <svg class="puffy-cloud-svg" viewBox="0 0 160 90">
-          <path d="M 32,74 
-                   L 126,74 
-                   A 18,18 0 0,0 144,56 
-                   A 20,20 0 0,0 124,36 
-                   A 34,34 0 0,0 62,32 
-                   A 24,24 0 0,0 20,54 
-                   A 18,18 0 0,0 32,74 
-                   Z" 
-                class="cloud-path" />
-        </svg>
-      </div>
-
-      <!-- Cloud 3: Lower Altitude / Soft Drifter -->
-      <div class="puffy-cloud-box cloud-3">
-        <svg class="puffy-cloud-svg" viewBox="0 0 160 90">
-          <path d="M 32,74 
-                   L 126,74 
-                   A 18,18 0 0,0 144,56 
-                   A 20,20 0 0,0 124,36 
-                   A 34,34 0 0,0 62,32 
-                   A 24,24 0 0,0 20,54 
-                   A 18,18 0 0,0 32,74 
-                   Z" 
-                class="cloud-path" />
-        </svg>
-      </div>
-    </div>
-
-    <!-- Daylight Soaring Birds (Visible in Light Mode) -->
-    <div class="daylight-birds" id="daylight-birds">
-      <div class="brutal-bird bird-1">
-        <svg viewBox="0 0 40 20" width="36" height="18">
-          <path d="M 2,14 Q 10,2 20,10 Q 30,2 38,14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
-        </svg>
-      </div>
-      <div class="brutal-bird bird-2">
-        <svg viewBox="0 0 40 20" width="28" height="14">
-          <path d="M 2,14 Q 10,2 20,10 Q 30,2 38,14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
-        </svg>
-      </div>
-    </div>
   </div>
 
   <!-- Top Marquee Bar -->
@@ -120,14 +25,14 @@
       <span>// ANGULAR 20 &amp; IONIC 8</span>
       <span>// HYPRLAND &amp; NIRI WAYLAND</span>
       <span>// SINE MDRRMO CAPSTONE</span>
-      <span>// CELESTIAL ORBITAL CYCLE MOTION</span>
+      <span>// HORIZON CELESTIAL CYCLE ENGINE</span>
       <span>// ZERO AI SLOP :: HANDCRAFTED CODE</span>
       <span>// TAURI v2 &amp; RUST CORE</span>
       <span>// LARAVEL 13 &amp; REVERB WEBSOCKETS</span>
       <span>// ANGULAR 20 &amp; IONIC 8</span>
       <span>// HYPRLAND &amp; NIRI WAYLAND</span>
       <span>// SINE MDRRMO CAPSTONE</span>
-      <span>// CELESTIAL ORBITAL CYCLE MOTION</span>
+      <span>// HORIZON CELESTIAL CYCLE ENGINE</span>
     </div>
   </aside>
 
@@ -197,6 +102,71 @@
         </div>
 
         <div class="hero-card-side">
+          <!-- Handcrafted Horizon Celestial Orbit Widget (Positioned Safely Below Top Banner) -->
+          <div class="horizon-widget-card brutal-card" id="horizon-widget" title="Click to cycle Sun & Moon across the horizon">
+            <div class="horizon-widget-header">
+              <span class="horizon-badge">// HORIZON ORBIT</span>
+              <span class="horizon-hint">CLICK TO CYCLE</span>
+            </div>
+
+            <div class="horizon-scene">
+              <!-- Orbit Carousel (Spins 180deg on theme toggle) -->
+              <div class="celestial-orbit-track" id="orbit-track">
+                <!-- Day Celestial Unit: Sun + Cute Puffy Cloud Companions -->
+                <div class="orbit-unit orbit-sun-unit">
+                  <div class="gif-sun">
+                    <div class="sun-inner-glow"></div>
+                  </div>
+                  <!-- Puffy cartoon cloud accompanying the sun -->
+                  <div class="sun-companion-cloud cloud-left">
+                    <svg viewBox="0 0 100 60" width="70" height="42">
+                      <path d="M 18,50 
+                               L 82,50 
+                               A 12,12 0 0,0 94,38 
+                               A 14,14 0 0,0 78,24 
+                               A 22,22 0 0,0 36,22 
+                               A 15,15 0 0,0 10,36 
+                               A 12,12 0 0,0 18,50 
+                               Z" 
+                            class="companion-cloud-path" />
+                      <!-- Inner blue shading lobe matching the GIF -->
+                      <path d="M 22,46 Q 36,32 54,34 Q 72,36 84,46" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" />
+                    </svg>
+                  </div>
+                  <div class="sun-companion-cloud cloud-small">
+                    <svg viewBox="0 0 70 45" width="46" height="30">
+                      <path d="M 14,38 L 56,38 A 10,10 0 0,0 66,28 A 12,12 0 0,0 52,16 A 16,16 0 0,0 26,16 A 10,10 0 0,0 14,38 Z" class="companion-cloud-path" />
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Night Celestial Unit: Moon + Star Dots -->
+                <div class="orbit-unit orbit-moon-unit">
+                  <div class="gif-moon">
+                    <div class="moon-dark-body"></div>
+                    <div class="moon-white-crescent"></div>
+                  </div>
+                  <!-- Scattered circular stars matching the GIF -->
+                  <div class="gif-star star-1"></div>
+                  <div class="gif-star star-2"></div>
+                  <div class="gif-star star-3"></div>
+                  <div class="gif-star star-4"></div>
+                  <div class="gif-star star-5"></div>
+                </div>
+              </div>
+
+              <!-- Curved Earth Horizon Dome (Physically masks celestial bodies as they set) -->
+              <div class="horizon-earth-dome">
+                <div class="dome-globe">
+                  <!-- Stylized continent landmass matching the GIF -->
+                  <div class="globe-continent"></div>
+                  <div class="globe-swirl"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Developer Spec Card -->
           <div class="spec-card brutal-card">
             <div class="spec-card-header">
               <span class="spec-card-title">DEV_SPEC.TXT</span>

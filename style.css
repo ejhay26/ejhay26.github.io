@@ -1,6 +1,6 @@
 /* ==========================================================================
    NEOBRUTALISM DESIGN SYSTEM — EMMANUEL JOHN PEREZ (ejhay26)
-   Enhanced: Childhood Puffy Clouds, Sun & Moon Celestial Orbit Cycle
+   Enhanced: Authentic GIF Horizon Celestial Orbit Engine & Zero-Overlap Layout
    ========================================================================== */
 
 :root {
@@ -26,8 +26,6 @@
   --shadow-offset: 5px;
   --card-bg: #FFFFFF;
   --card-bg-subtle: #FAFAF9;
-  --cloud-fill: #FFFFFF;
-  --bird-color: #0E0F12;
 
   /* Sizing & Transitions */
   --radius-sharp: 0px;
@@ -51,12 +49,11 @@
   --color-yellow: #FDE047;
   --color-lime: #4ADE80;
   --color-pink: #F472B6;
-  --cloud-fill: #1E293B;
-  --bird-color: transparent;
 }
 
 /* ==========================================================================
    GLOBAL RESET & SELECTION PREVENTION
+   Strictly disable text highlight, selection, and drag
    ========================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -108,10 +105,8 @@ a {
   text-decoration: none;
 }
 
-/* ==========================================================================
-   DYNAMIC SKY ENVIRONMENT (SUN, MOON, CLOUDS, BIRDS, STARS)
-   ========================================================================== */
-.sky-environment {
+/* Starfield Backdrop (Night Mode Only) */
+.stars-backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -121,7 +116,6 @@ a {
   z-index: 1;
 }
 
-/* Starfield Canvas (Night Mode Only) */
 #stars-canvas {
   position: absolute;
   top: 0;
@@ -135,293 +129,6 @@ a {
 [data-theme="dark"] #stars-canvas {
   opacity: 1;
 }
-
-/* Celestial Stage (Top Right Orbit Container) */
-.celestial-stage {
-  position: absolute;
-  top: 110px;
-  right: 60px;
-  width: 90px;
-  height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-  z-index: 5;
-}
-
-.celestial-body {
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Neobrutalist Sun */
-.brutal-sun {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.sun-core {
-  width: 54px;
-  height: 54px;
-  background-color: var(--color-yellow);
-  border: 3.5px solid var(--border-color);
-  border-radius: 50%;
-  box-shadow: 4px 4px 0px var(--shadow-color);
-  position: relative;
-  z-index: 2;
-}
-
-.sun-rays-ring {
-  position: absolute;
-  width: 84px;
-  height: 84px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: spin-sun-rays 32s linear infinite;
-  z-index: 1;
-}
-
-@keyframes spin-sun-rays {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.sun-ray {
-  position: absolute;
-  width: 6px;
-  height: 12px;
-  background-color: var(--color-yellow);
-  border: 2px solid var(--border-color);
-  border-radius: 2px;
-}
-
-.sun-ray.r1 { top: 0; left: calc(50% - 3px); }
-.sun-ray.r2 { bottom: 0; left: calc(50% - 3px); }
-.sun-ray.r3 { left: 0; top: calc(50% - 3px); transform: rotate(90deg); }
-.sun-ray.r4 { right: 0; top: calc(50% - 3px); transform: rotate(90deg); }
-.sun-ray.r5 { top: 8px; left: 8px; transform: rotate(45deg); }
-.sun-ray.r6 { bottom: 8px; right: 8px; transform: rotate(45deg); }
-.sun-ray.r7 { top: 8px; right: 8px; transform: rotate(-45deg); }
-.sun-ray.r8 { bottom: 8px; left: 8px; transform: rotate(-45deg); }
-
-/* Neobrutalist Crescent Moon */
-.brutal-moon {
-  opacity: 0;
-  transform: translateY(160px);
-}
-
-.moon-svg {
-  filter: drop-shadow(4px 4px 0px var(--shadow-color));
-}
-
-.moon-path {
-  fill: #FDE047;
-  stroke: var(--border-color);
-  stroke-width: 3.5;
-  stroke-linejoin: round;
-}
-
-.moon-crater {
-  fill: #EAB308;
-  stroke: var(--border-color);
-  stroke-width: 1.5;
-}
-
-/* ==========================================================================
-   CHILDHOOD CLASSIC PUFFY CLOUDS
-   Strictly behind all text and cards, placed outside headline bounds
-   ========================================================================== */
-.clouds-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 0; /* Strictly behind all content */
-  pointer-events: none;
-}
-
-.puffy-cloud-box {
-  position: absolute;
-  left: -240px;
-  pointer-events: none;
-}
-
-.puffy-cloud-svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(4px 4px 0px var(--shadow-color));
-}
-
-.cloud-path {
-  fill: var(--cloud-fill);
-  stroke: var(--border-color);
-  stroke-width: 3.5;
-  stroke-linejoin: round;
-  transition: fill 0.4s ease, stroke 0.4s ease;
-}
-
-/* Cloud 1: High sky above hero text */
-.cloud-1 {
-  width: 140px;
-  height: 80px;
-  top: 15px;
-  animation: drift-cloud 48s linear infinite;
-  opacity: 0.55;
-}
-
-/* Cloud 2: Below hero actions and above marquee ribbon */
-.cloud-2 {
-  width: 200px;
-  height: 110px;
-  top: 490px;
-  animation: drift-cloud 74s linear infinite -22s;
-  opacity: 0.5;
-}
-
-/* Cloud 3: Drifting softly behind lower work grid */
-.cloud-3 {
-  width: 130px;
-  height: 75px;
-  top: 780px;
-  animation: drift-cloud 60s linear infinite -36s;
-  opacity: 0.45;
-}
-
-@keyframes drift-cloud {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(calc(100vw + 320px)); }
-}
-
-/* Daylight Soaring Birds */
-.daylight-birds {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transition: opacity 0.5s ease;
-}
-
-[data-theme="dark"] .daylight-birds {
-  opacity: 0;
-}
-
-.brutal-bird {
-  position: absolute;
-  color: var(--bird-color);
-  left: -80px;
-}
-
-.bird-1 {
-  top: 170px;
-  animation: glide-bird 34s linear infinite;
-}
-
-.bird-2 {
-  top: 210px;
-  animation: glide-bird 42s linear infinite -12s;
-}
-
-@keyframes glide-bird {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(calc(50vw + 40px), 18px) scale(0.95); }
-  100% { transform: translate(calc(100vw + 120px), -10px) scale(1); }
-}
-
-/* ==========================================================================
-   NEOBRUTALIST REUSABLE PRIMITIVES
-   ========================================================================== */
-.brutal-card {
-  background: var(--card-bg);
-  border: var(--border-width) solid var(--border-color);
-  box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--shadow-color);
-  border-radius: var(--radius-sm);
-  transition: var(--transition-tactile);
-}
-
-.brutal-card.bg-yellow { background-color: var(--color-yellow); color: #000; }
-.brutal-card.bg-lime   { background-color: var(--color-lime); color: #000; }
-.brutal-card.bg-pink   { background-color: var(--color-pink); color: #000; }
-.brutal-card.bg-white  { background-color: var(--card-bg); }
-
-.brutal-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  border: var(--border-width) solid var(--border-color);
-  box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--shadow-color);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  text-decoration: none;
-  transition: var(--transition-tactile);
-}
-
-.brutal-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0px var(--shadow-color);
-}
-
-.brutal-btn.btn-depress:active,
-.brutal-btn:active {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0px var(--shadow-color);
-}
-
-.btn-lg {
-  padding: 14px 24px;
-  font-size: 1.05rem;
-  letter-spacing: -0.01em;
-}
-
-.btn-sm {
-  padding: 8px 16px;
-  font-size: 0.9rem;
-}
-
-.btn-yellow { background-color: var(--color-yellow); color: #000; }
-.btn-lime   { background-color: var(--color-lime); color: #000; }
-.btn-pink   { background-color: var(--color-pink); color: #000; }
-.btn-white  { background-color: var(--card-bg); color: var(--text-main); }
-.btn-accent { background-color: var(--color-yellow); color: #000; }
-
-[data-theme="dark"] .btn-accent {
-  background-color: var(--color-lime);
-  color: #000;
-}
-
-.sticker-pill {
-  display: inline-block;
-  padding: 4px 12px;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 700;
-  border: 2px solid var(--border-color);
-  box-shadow: 2px 2px 0px var(--shadow-color);
-  border-radius: var(--radius-pill);
-  transform-origin: center center;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.sticker-pill:hover {
-  transform: scale(1.08) rotate(0deg) !important;
-}
-
-.tag-yellow { background-color: var(--color-yellow); color: #000; }
-.tag-lime   { background-color: var(--color-lime); color: #000; }
-.tag-pink   { background-color: var(--color-pink); color: #000; }
-.tag-white  { background-color: var(--card-bg); color: var(--text-main); }
 
 /* ==========================================================================
    TOP MARQUEE
@@ -438,7 +145,7 @@ a {
   font-weight: 700;
   letter-spacing: 0.05em;
   position: relative;
-  z-index: 10;
+  z-index: 20;
 }
 
 [data-theme="dark"] .top-marquee {
@@ -556,18 +263,104 @@ a {
 }
 
 /* ==========================================================================
+   NEOBRUTALIST REUSABLE PRIMITIVES
+   ========================================================================== */
+.brutal-card {
+  background: var(--card-bg);
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--shadow-color);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-tactile);
+}
+
+.brutal-card.bg-yellow { background-color: var(--color-yellow); color: #000; }
+.brutal-card.bg-lime   { background-color: var(--color-lime); color: #000; }
+.brutal-card.bg-pink   { background-color: var(--color-pink); color: #000; }
+.brutal-card.bg-white  { background-color: var(--card-bg); }
+
+.brutal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--shadow-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition-tactile);
+}
+
+.brutal-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0px var(--shadow-color);
+}
+
+.brutal-btn.btn-depress:active,
+.brutal-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0px var(--shadow-color);
+}
+
+.btn-lg {
+  padding: 14px 24px;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+}
+
+.btn-yellow { background-color: var(--color-yellow); color: #000; }
+.btn-lime   { background-color: var(--color-lime); color: #000; }
+.btn-pink   { background-color: var(--color-pink); color: #000; }
+.btn-white  { background-color: var(--card-bg); color: var(--text-main); }
+.btn-accent { background-color: var(--color-yellow); color: #000; }
+
+[data-theme="dark"] .btn-accent {
+  background-color: var(--color-lime);
+  color: #000;
+}
+
+.sticker-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 2px solid var(--border-color);
+  box-shadow: 2px 2px 0px var(--shadow-color);
+  border-radius: var(--radius-pill);
+  transform-origin: center center;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sticker-pill:hover {
+  transform: scale(1.08) rotate(0deg) !important;
+}
+
+.tag-yellow { background-color: var(--color-yellow); color: #000; }
+.tag-lime   { background-color: var(--color-lime); color: #000; }
+.tag-pink   { background-color: var(--color-pink); color: #000; }
+.tag-white  { background-color: var(--card-bg); color: var(--text-main); }
+
+/* ==========================================================================
    HERO SECTION
    ========================================================================== */
 .hero-section {
-  padding-top: 56px;
+  padding-top: 52px;
   padding-bottom: 48px;
 }
 
 .hero-grid {
   display: grid;
   grid-template-columns: 1.25fr 0.9fr;
-  gap: 40px;
-  align-items: center;
+  gap: 36px;
+  align-items: start;
 }
 
 .pill-row {
@@ -609,6 +402,217 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
+}
+
+.hero-card-side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ==========================================================================
+   HORIZON CELESTIAL ORBIT WIDGET (INSPIRED BY THE DRIBBBLE GIF)
+   Sun & Moon rotate along a circular arc behind a curved earth horizon
+   ========================================================================== */
+.horizon-widget-card {
+  padding: 18px 20px;
+  cursor: pointer;
+  background-color: var(--card-bg);
+}
+
+.horizon-widget-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0px var(--shadow-color);
+}
+
+.horizon-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.horizon-badge {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.horizon-hint {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  background-color: var(--color-yellow);
+  color: #000;
+  padding: 2px 6px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 2px;
+}
+
+.horizon-scene {
+  position: relative;
+  height: 180px;
+  background: linear-gradient(180deg, #2563EB 0%, #3B82F6 100%);
+  border: 2.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: background 0.5s ease;
+}
+
+[data-theme="dark"] .horizon-scene {
+  background: linear-gradient(180deg, #03081A 0%, #002973 100%);
+}
+
+/* Celestial Orbit Carousel Wheel */
+.celestial-orbit-track {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  left: calc(50% - 125px);
+  top: 45px;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: rotate(0deg);
+  transition: transform 0.9s cubic-bezier(0.34, 1.25, 0.64, 1);
+}
+
+.orbit-unit {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Day Unit (Sun + Companion Puffy Clouds) */
+.orbit-sun-unit {
+  top: -12px;
+  left: calc(50% - 32px);
+  width: 64px;
+  height: 64px;
+}
+
+.gif-sun {
+  width: 54px;
+  height: 54px;
+  background-color: #FFD200;
+  border: 3.5px solid #000;
+  border-radius: 50%;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.25);
+  position: relative;
+  z-index: 2;
+}
+
+.sun-companion-cloud {
+  position: absolute;
+  pointer-events: none;
+  filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.2));
+}
+
+.companion-cloud-path {
+  fill: #FFFFFF;
+  stroke: #000000;
+  stroke-width: 3.5;
+  stroke-linejoin: round;
+}
+
+.cloud-left {
+  left: -48px;
+  top: -10px;
+  z-index: 3;
+}
+
+.cloud-small {
+  right: -32px;
+  bottom: -4px;
+  z-index: 1;
+}
+
+/* Night Unit (Moon + Star Dots) */
+.orbit-moon-unit {
+  bottom: -12px;
+  left: calc(50% - 32px);
+  width: 64px;
+  height: 64px;
+  transform: rotate(180deg); /* Oriented upright when at top */
+}
+
+.gif-moon {
+  width: 52px;
+  height: 52px;
+  background-color: #002973;
+  border: 3.5px solid #000;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+}
+
+.moon-white-crescent {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 12px 0 0 0 #FFFFFF;
+}
+
+/* Star dots scattered around moon */
+.gif-star {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #FFFFFF;
+  border: 2px solid #000000;
+  border-radius: 50%;
+}
+
+.star-1 { top: -14px; left: -18px; }
+.star-2 { top: -20px; right: -16px; }
+.star-3 { bottom: 10px; left: -24px; width: 6px; height: 6px; }
+.star-4 { bottom: -12px; right: -18px; width: 6px; height: 6px; }
+.star-5 { top: 12px; right: -28px; width: 7px; height: 7px; }
+
+/* Curved Earth Horizon Dome (Masks bodies as they sink) */
+.horizon-earth-dome {
+  position: absolute;
+  bottom: -46px;
+  left: calc(50% - 95px);
+  width: 190px;
+  height: 125px;
+  border-radius: 50%;
+  border: 3.5px solid #000000;
+  background-color: #00BD84;
+  overflow: hidden;
+  z-index: 4;
+  transition: background-color 0.5s ease;
+}
+
+[data-theme="dark"] .horizon-earth-dome {
+  background-color: #006B7B;
+}
+
+.dome-globe {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.globe-continent {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  width: 90px;
+  height: 60px;
+  background-color: #1884FF;
+  border: 3px solid #000;
+  border-radius: 40px 20px 30px 10px;
+  transition: background-color 0.5s ease;
+}
+
+[data-theme="dark"] .globe-continent {
+  background-color: #002973;
 }
 
 /* Spec Card on Hero Side */
@@ -1070,7 +1074,6 @@ a {
   z-index: 2;
 }
 
-/* GPU Accelerated Trailing Cursor */
 .gpu-cursor-trail {
   position: absolute;
   top: 2px;
@@ -1290,23 +1293,5 @@ a {
   }
   .contact-stamp {
     align-self: flex-start;
-  }
-  .celestial-stage {
-    top: 110px;
-    right: 20px;
-    width: 65px;
-    height: 65px;
-  }
-  .sun-core {
-    width: 42px;
-    height: 42px;
-  }
-  .sun-rays-ring {
-    width: 68px;
-    height: 68px;
-  }
-  .moon-svg {
-    width: 58px;
-    height: 58px;
   }
 }
