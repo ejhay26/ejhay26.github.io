@@ -1,6 +1,6 @@
 /* ==========================================================================
-   NEOBRUTALISM DESIGN SYSTEM — EMMANUEL JOHN PEREZ (ejhay26)
-   Enhanced: Authentic GIF Horizon Celestial Orbit Engine & Zero-Overlap Layout
+   NEOBRUTALISM DESIGN SYSTEM — EMMANUEL JOHN PEREZ (terajaki // teralabs)
+   Handcrafted. High contrast, tactile physics, authentic celestial motion.
    ========================================================================== */
 
 :root {
@@ -35,7 +35,7 @@
 }
 
 /* ==========================================================================
-   MIDNIGHT BLUE NIGHT SKY THEME (DARK MODE)
+   MIDNIGHT BLUE NIGHT SKY THEME (DARK MODE - FROM DRIBBBLE GIF)
    ========================================================================== */
 [data-theme="dark"] {
   --bg-page: #080E21;
@@ -52,8 +52,7 @@
 }
 
 /* ==========================================================================
-   GLOBAL RESET & SELECTION PREVENTION
-   Strictly disable text highlight, selection, and drag
+   GLOBAL RESET & STRICT SELECTION PREVENTION
    ========================================================================== */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -84,7 +83,7 @@ body {
   line-height: 1.5;
   background-image: radial-gradient(var(--bg-dots) 1.5px, transparent 1.5px);
   background-size: 24px 24px;
-  transition: background-color 0.4s ease, color 0.4s ease;
+  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease;
   overflow-x: hidden;
   position: relative;
   min-height: 100vh;
@@ -105,29 +104,189 @@ a {
   text-decoration: none;
 }
 
-/* Starfield Backdrop (Night Mode Only) */
-.stars-backdrop {
+/* ==========================================================================
+   FULL-PAGE CELESTIAL SKY & ORBITAL SWEEP (INSPIRED BY DRIBBBLE GIF)
+   ========================================================================== */
+.celestial-sky-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
+  overflow: hidden;
 }
 
-#stars-canvas {
+#sky-canvas {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
   transition: opacity 0.6s ease;
 }
 
-[data-theme="dark"] #stars-canvas {
+[data-theme="dark"] #sky-canvas {
   opacity: 1;
+}
+
+/* Celestial Orbit Arena in High Sky */
+.sky-celestial-orbit {
+  position: absolute;
+  top: 60px;
+  right: 70px;
+  width: 140px;
+  height: 140px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sky-celestial-body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Sun Unit (Day Mode) */
+.sky-sun-unit {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+  transition: opacity 0.4s ease;
+}
+
+.gif-style-sun {
+  width: 66px;
+  height: 66px;
+  background-color: #FFD200;
+  border: 3.5px solid #0E0F12;
+  border-radius: 50%;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.25);
+  position: relative;
+  z-index: 2;
+}
+
+.sun-orbit-cloud {
+  position: absolute;
+  left: -48px;
+  top: -8px;
+  z-index: 3;
+  filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.2));
+}
+
+.gif-cloud-path {
+  fill: #FFFFFF;
+  stroke: #0E0F12;
+  stroke-width: 3.5;
+  stroke-linejoin: round;
+}
+
+/* Moon Unit (Night Mode) */
+.sky-moon-unit {
+  opacity: 0;
+  transform: translate(160px, 180px) scale(0.3);
+  transition: opacity 0.4s ease;
+}
+
+.gif-style-moon {
+  width: 62px;
+  height: 62px;
+  background-color: #002973;
+  border: 3.5px solid #0E0F12;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+.moon-white-crescent {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 14px 0 0 0 #FFFFFF;
+}
+
+/* Orbiting White Stars with Black Stroke */
+.orbit-star {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #FFFFFF;
+  border: 2px solid #0E0F12;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.orbit-star.s1 { top: 6px; left: -14px; }
+.orbit-star.s2 { top: -14px; right: 12px; }
+.orbit-star.s3 { bottom: 12px; left: -18px; width: 6px; height: 6px; }
+.orbit-star.s4 { bottom: -12px; right: -14px; width: 7px; height: 7px; }
+
+/* Daylight Flapping Birds */
+.daylight-birds {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .daylight-birds {
+  opacity: 0;
+}
+
+.soaring-bird {
+  position: absolute;
+  left: -80px;
+}
+
+.bird-1 {
+  top: 130px;
+  animation: glide-bird-1 38s linear infinite;
+}
+
+.bird-2 {
+  top: 175px;
+  animation: glide-bird-2 46s linear infinite -14s;
+}
+
+@keyframes glide-bird-1 {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(calc(50vw + 30px), 15px); }
+  100% { transform: translate(calc(100vw + 100px), -10px); }
+}
+
+@keyframes glide-bird-2 {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(calc(50vw + 30px), -15px); }
+  100% { transform: translate(calc(100vw + 100px), 10px); }
+}
+
+/* Wing Flapping Keyframes */
+.bird-wing-left {
+  transform-origin: 22px 14px;
+  animation: flap-wing-left 0.42s ease-in-out infinite alternate;
+}
+
+.bird-wing-right {
+  transform-origin: 22px 14px;
+  animation: flap-wing-right 0.42s ease-in-out infinite alternate;
+}
+
+@keyframes flap-wing-left {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(34deg); }
+}
+
+@keyframes flap-wing-right {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(-34deg); }
 }
 
 /* ==========================================================================
@@ -327,7 +486,9 @@ a {
 }
 
 .sticker-pill {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 4px 12px;
   font-family: var(--font-mono);
   font-size: 0.8rem;
@@ -348,18 +509,34 @@ a {
 .tag-pink   { background-color: var(--color-pink); color: #000; }
 .tag-white  { background-color: var(--card-bg); color: var(--text-main); }
 
+/* Neobrutalist Philippine Flag */
+.brutal-ph-flag {
+  border: 1.5px solid #0E0F12;
+  box-shadow: 1.5px 1.5px 0px #0E0F12;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.brutal-ph-flag-inline {
+  border: 1px solid #0E0F12;
+  box-shadow: 1px 1px 0px #0E0F12;
+  border-radius: 1px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
 /* ==========================================================================
    HERO SECTION
    ========================================================================== */
 .hero-section {
-  padding-top: 52px;
+  padding-top: 56px;
   padding-bottom: 48px;
 }
 
 .hero-grid {
   display: grid;
   grid-template-columns: 1.25fr 0.9fr;
-  gap: 36px;
+  gap: 40px;
   align-items: start;
 }
 
@@ -402,217 +579,6 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-}
-
-.hero-card-side {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* ==========================================================================
-   HORIZON CELESTIAL ORBIT WIDGET (INSPIRED BY THE DRIBBBLE GIF)
-   Sun & Moon rotate along a circular arc behind a curved earth horizon
-   ========================================================================== */
-.horizon-widget-card {
-  padding: 18px 20px;
-  cursor: pointer;
-  background-color: var(--card-bg);
-}
-
-.horizon-widget-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: calc(var(--shadow-offset) + 2px) calc(var(--shadow-offset) + 2px) 0px var(--shadow-color);
-}
-
-.horizon-widget-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.horizon-badge {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 800;
-}
-
-.horizon-hint {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  background-color: var(--color-yellow);
-  color: #000;
-  padding: 2px 6px;
-  border: 1.5px solid var(--border-color);
-  border-radius: 2px;
-}
-
-.horizon-scene {
-  position: relative;
-  height: 180px;
-  background: linear-gradient(180deg, #2563EB 0%, #3B82F6 100%);
-  border: 2.5px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  transition: background 0.5s ease;
-}
-
-[data-theme="dark"] .horizon-scene {
-  background: linear-gradient(180deg, #03081A 0%, #002973 100%);
-}
-
-/* Celestial Orbit Carousel Wheel */
-.celestial-orbit-track {
-  position: absolute;
-  width: 250px;
-  height: 250px;
-  left: calc(50% - 125px);
-  top: 45px;
-  border-radius: 50%;
-  pointer-events: none;
-  transform: rotate(0deg);
-  transition: transform 0.9s cubic-bezier(0.34, 1.25, 0.64, 1);
-}
-
-.orbit-unit {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Day Unit (Sun + Companion Puffy Clouds) */
-.orbit-sun-unit {
-  top: -12px;
-  left: calc(50% - 32px);
-  width: 64px;
-  height: 64px;
-}
-
-.gif-sun {
-  width: 54px;
-  height: 54px;
-  background-color: #FFD200;
-  border: 3.5px solid #000;
-  border-radius: 50%;
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.25);
-  position: relative;
-  z-index: 2;
-}
-
-.sun-companion-cloud {
-  position: absolute;
-  pointer-events: none;
-  filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.2));
-}
-
-.companion-cloud-path {
-  fill: #FFFFFF;
-  stroke: #000000;
-  stroke-width: 3.5;
-  stroke-linejoin: round;
-}
-
-.cloud-left {
-  left: -48px;
-  top: -10px;
-  z-index: 3;
-}
-
-.cloud-small {
-  right: -32px;
-  bottom: -4px;
-  z-index: 1;
-}
-
-/* Night Unit (Moon + Star Dots) */
-.orbit-moon-unit {
-  bottom: -12px;
-  left: calc(50% - 32px);
-  width: 64px;
-  height: 64px;
-  transform: rotate(180deg); /* Oriented upright when at top */
-}
-
-.gif-moon {
-  width: 52px;
-  height: 52px;
-  background-color: #002973;
-  border: 3.5px solid #000;
-  border-radius: 50%;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
-}
-
-.moon-white-crescent {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: transparent;
-  box-shadow: 12px 0 0 0 #FFFFFF;
-}
-
-/* Star dots scattered around moon */
-.gif-star {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background-color: #FFFFFF;
-  border: 2px solid #000000;
-  border-radius: 50%;
-}
-
-.star-1 { top: -14px; left: -18px; }
-.star-2 { top: -20px; right: -16px; }
-.star-3 { bottom: 10px; left: -24px; width: 6px; height: 6px; }
-.star-4 { bottom: -12px; right: -18px; width: 6px; height: 6px; }
-.star-5 { top: 12px; right: -28px; width: 7px; height: 7px; }
-
-/* Curved Earth Horizon Dome (Masks bodies as they sink) */
-.horizon-earth-dome {
-  position: absolute;
-  bottom: -46px;
-  left: calc(50% - 95px);
-  width: 190px;
-  height: 125px;
-  border-radius: 50%;
-  border: 3.5px solid #000000;
-  background-color: #00BD84;
-  overflow: hidden;
-  z-index: 4;
-  transition: background-color 0.5s ease;
-}
-
-[data-theme="dark"] .horizon-earth-dome {
-  background-color: #006B7B;
-}
-
-.dome-globe {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.globe-continent {
-  position: absolute;
-  top: 15px;
-  left: 20px;
-  width: 90px;
-  height: 60px;
-  background-color: #1884FF;
-  border: 3px solid #000;
-  border-radius: 40px 20px 30px 10px;
-  transition: background-color 0.5s ease;
-}
-
-[data-theme="dark"] .globe-continent {
-  background-color: #002973;
 }
 
 /* Spec Card on Hero Side */
@@ -738,7 +704,7 @@ a {
 }
 
 /* ==========================================================================
-   FEATURED PROJECTS SECTION (BIDIRECTIONAL SCROLL TRANSITIONS)
+   FEATURED PROJECTS SECTION (ZERO-JITTER SCROLL PIPELINE)
    ========================================================================== */
 .section-work {
   padding-bottom: 80px;
@@ -803,6 +769,19 @@ a {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 28px;
+}
+
+/* Smooth Zero-Jitter Scroll Reveal */
+.scroll-card {
+  opacity: 0.25;
+  transform: translateY(22px);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .project-card {
@@ -919,7 +898,7 @@ a {
 }
 
 /* ==========================================================================
-   TINKER TERMINAL & GPU TRAILING CURSOR
+   ARCHITECTURAL CONSOLE (CLEAN HEADER, ZERO BADGE JUNK)
    ========================================================================== */
 .section-terminal {
   padding-bottom: 80px;
@@ -969,15 +948,6 @@ a {
   color: #94A3B8;
   padding: 2px 6px;
   border-radius: 2px;
-}
-
-.terminal-mode {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  background-color: var(--color-lime);
-  color: #000;
-  padding: 2px 8px;
-  font-weight: 800;
 }
 
 .terminal-body {
@@ -1093,7 +1063,7 @@ a {
 }
 
 /* ==========================================================================
-   SKILLS & ETHOS GRID
+   SKILLS & ARSENAL GRID
    ========================================================================== */
 .section-skills {
   padding-bottom: 80px;
@@ -1235,7 +1205,7 @@ a {
 }
 
 /* ==========================================================================
-   FOOTER
+   FOOTER (CUSTOMIZED ARCHITECTURAL SIGNOFF)
    ========================================================================== */
 .site-footer {
   border-top: var(--border-width) solid var(--border-color);
@@ -1255,9 +1225,13 @@ a {
 
 .footer-meta {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
-  margin-top: 4px;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 /* ==========================================================================
@@ -1270,6 +1244,12 @@ a {
   }
   .skills-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .sky-celestial-orbit {
+    top: 50px;
+    right: 20px;
+    width: 100px;
+    height: 100px;
   }
 }
 
