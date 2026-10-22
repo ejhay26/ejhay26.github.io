@@ -187,7 +187,14 @@ function initProjectFilters() {
 }
 
 /* ==========================================================================
-   5. CELESTIAL HORIZON ORBIT CYCLE (ANIMATED SWEEP FROM DRIBBBLE GIF)
+   5. CELESTIAL HORIZON ORBIT CYCLE (FULL SCREEN-WIDE PLANET HORIZON SWEEP)
+   Directly matched to GIF & requested celestial physics:
+   - Moon exits to the right of the entire screen along the horizon arc.
+   - Stars exit to the right with trails like speed of light.
+   - Sun enters from very left side of viewport and curves up across horizon.
+   - Puffy clouds slide in smoothly.
+   - Reverse: Sun & clouds exit to right, Moon enters from very left and curves up,
+     stars streak in from left with speed-of-light trails and settle into place.
    ========================================================================== */
 function initCelestialOrbitCycle() {
   const toggleBtn = document.getElementById('theme-toggle');
@@ -195,7 +202,7 @@ function initCelestialOrbitCycle() {
   const moonEl = document.getElementById('sky-moon');
   const telemetryText = document.getElementById('telemetry-text');
 
-  if (!toggleBtn) return;
+  if (!toggleBtn || !sunEl || !moonEl) return;
 
   const themeLabel = toggleBtn.querySelector('.theme-label');
   const themeIcon = toggleBtn.querySelector('.theme-icon');
@@ -210,8 +217,14 @@ function initCelestialOrbitCycle() {
     localStorage.setItem('ejhay26_theme', nextTheme);
   });
 
+  // Clicking directly on Sun or Moon in the sky also toggles the celestial cycle!
+  sunEl.addEventListener('click', () => toggleBtn.click());
+  moonEl.addEventListener('click', () => toggleBtn.click());
+
   function applyThemeState(theme, animate) {
     document.body.setAttribute('data-theme', theme);
+    const screenW = window.innerWidth;
+    const screenH = window.innerHeight;
 
     if (theme === 'dark') {
       themeLabel.textContent = 'DAY PAPER';
@@ -219,7 +232,7 @@ function initCelestialOrbitCycle() {
       if (telemetryText) telemetryText.textContent = 'LUNAR // PHASE WAXING';
 
       if (animate && typeof anime !== 'undefined') {
-        // Toggle button spin
+        // Toggle button tactile spin
         anime({
           targets: toggleBtn,
           rotate: '+=360deg',
@@ -228,37 +241,56 @@ function initCelestialOrbitCycle() {
           easing: 'easeOutElastic(1, .6)'
         });
 
-        // Sun sets sideways-downward along an orbital arc into the horizon
+        // 1. Sun sets to the right of the entire screen along the downward orbital arc
         anime({
           targets: sunEl,
-          translateX: [0, 180],
-          translateY: [0, 220],
-          rotate: [0, 140],
-          scale: [1, 0.3],
+          translateX: [0, screenW * 0.35 + 300],
+          translateY: [0, screenH * 0.45],
+          rotate: [0, 40],
+          scale: [1, 0.85],
+          opacity: [1, 1, 0],
+          duration: 1100,
+          easing: 'cubicBezier(0.4, 0, 0.7, 0.2)',
+          complete: () => {
+            sunEl.style.opacity = '0';
+          }
+        });
+
+        // 2. Daytime sliding clouds slide out to the right off-screen
+        anime({
+          targets: '.sliding-cloud',
+          translateX: [0, screenW * 0.35 + 300],
           opacity: [1, 0],
-          duration: 850,
+          duration: 900,
           easing: 'cubicBezier(0.4, 0, 0.7, 0.2)'
         });
 
-        // Crescent Moon curves upward from the opposite side into the sky with star trail
+        // 3. Crescent Moon enters from the very left side of the viewport and curves up along horizon
+        moonEl.style.opacity = '1';
         anime({
           targets: moonEl,
-          translateX: [-180, 0],
-          translateY: [220, 0],
-          rotate: [-100, 0],
-          scale: [0.3, 1],
-          opacity: [0, 1],
-          duration: 950,
-          delay: 150,
-          easing: 'cubicBezier(0.2, 0.9, 0.3, 1.2)'
+          translateX: [-(screenW * 0.75 + 350), 0],
+          translateY: [screenH * 0.45, -35, 0],
+          rotate: [-55, 0],
+          scale: [0.85, 1.05, 1],
+          opacity: [0, 1, 1],
+          duration: 1250,
+          delay: 80,
+          easing: 'cubicBezier(0.2, 0.9, 0.3, 1)'
         });
+
+        // 4. Stars streak in from the left with trails like speed of light
+        if (window.starfieldController) {
+          window.starfieldController.triggerWarpEnter();
+        }
       } else {
-        sunEl.style.transform = 'translate(180px, 220px) scale(0.3)';
+        sunEl.style.transform = `translate(${screenW * 0.4 + 300}px, ${screenH * 0.5}px)`;
         sunEl.style.opacity = '0';
         moonEl.style.transform = 'translate(0px, 0px) scale(1)';
         moonEl.style.opacity = '1';
       }
     } else {
+      // Switching to Day Paper
       themeLabel.textContent = 'NIGHT SKY';
       themeIcon.textContent = '[M]';
       if (telemetryText) telemetryText.textContent = 'SOL // ZENITH 12:00';
@@ -272,32 +304,51 @@ function initCelestialOrbitCycle() {
           easing: 'easeOutElastic(1, .6)'
         });
 
-        // Moon sets sideways-downward along orbital arc
+        // 1. Stars exit to the right with trails like speed of light!
+        if (window.starfieldController) {
+          window.starfieldController.triggerWarpExit();
+        }
+
+        // 2. Moon exits to the right of the entire screen along horizon arc
         anime({
           targets: moonEl,
-          translateX: [0, 180],
-          translateY: [0, 220],
-          rotate: [0, 100],
-          scale: [1, 0.3],
-          opacity: [1, 0],
-          duration: 850,
-          easing: 'cubicBezier(0.4, 0, 0.7, 0.2)'
+          translateX: [0, screenW * 0.35 + 300],
+          translateY: [0, screenH * 0.45],
+          rotate: [0, 40],
+          scale: [1, 0.85],
+          opacity: [1, 1, 0],
+          duration: 1100,
+          easing: 'cubicBezier(0.4, 0, 0.7, 0.2)',
+          complete: () => {
+            moonEl.style.opacity = '0';
+          }
         });
 
-        // Sun curves upward into the sky from the opposite side
+        // 3. Sun enters from the very left side of the viewport and arcs up across horizon
+        sunEl.style.opacity = '1';
         anime({
           targets: sunEl,
-          translateX: [-180, 0],
-          translateY: [220, 0],
-          rotate: [-140, 0],
-          scale: [0.3, 1],
+          translateX: [-(screenW * 0.75 + 350), 0],
+          translateY: [screenH * 0.45, -35, 0],
+          rotate: [-55, 0],
+          scale: [0.85, 1.05, 1],
+          opacity: [0, 1, 1],
+          duration: 1250,
+          delay: 80,
+          easing: 'cubicBezier(0.2, 0.9, 0.3, 1)'
+        });
+
+        // 4. Clouds slide in from the left
+        anime({
+          targets: '.sliding-cloud',
+          translateX: [-350, 0],
           opacity: [0, 1],
-          duration: 950,
-          delay: 150,
-          easing: 'cubicBezier(0.2, 0.9, 0.3, 1.2)'
+          delay: anime.stagger(130, { start: 200 }),
+          duration: 1000,
+          easing: 'cubicBezier(0.2, 0.9, 0.3, 1)'
         });
       } else {
-        moonEl.style.transform = 'translate(180px, 220px) scale(0.3)';
+        moonEl.style.transform = `translate(${screenW * 0.4 + 300}px, ${screenH * 0.5}px)`;
         moonEl.style.opacity = '0';
         sunEl.style.transform = 'translate(0px, 0px) scale(1)';
         sunEl.style.opacity = '1';
@@ -307,7 +358,7 @@ function initCelestialOrbitCycle() {
 }
 
 /* ==========================================================================
-   6. DYNAMIC STARFIELD (RANDOMIZED LOCATIONS) & OCCASIONAL SHOOTING METEOR
+   6. DYNAMIC STARFIELD & SPEED-OF-LIGHT WARP TRAILS
    ========================================================================== */
 function initDynamicStarfieldAndMeteor() {
   const canvas = document.getElementById('sky-canvas');
@@ -320,6 +371,10 @@ function initDynamicStarfieldAndMeteor() {
   let meteor = null;
   let nextMeteorTime = Date.now() + 8000;
 
+  let warpMode = 'none'; // 'none', 'exit', 'enter'
+  let warpStartTime = 0;
+  let warpDuration = 800;
+
   function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -329,14 +384,17 @@ function initDynamicStarfieldAndMeteor() {
   function createStar() {
     return {
       x: Math.random() * canvas.width,
-      y: Math.random() * (canvas.height * 0.7), // Upper sky
+      y: Math.random() * (canvas.height * 0.72),
+      targetX: 0,
       size: Math.random() * 2 + 1,
       alpha: 0,
-      targetAlpha: Math.random() * 0.8 + 0.2,
+      targetAlpha: Math.random() * 0.8 + 0.25,
       fadeSpeed: Math.random() * 0.02 + 0.008,
-      state: 'fadeIn', // 'fadeIn' -> 'hold' -> 'fadeOut'
+      state: 'fadeIn',
       holdTimer: Math.random() * 60 + 30,
-      isDot: Math.random() > 0.3
+      isDot: Math.random() > 0.3,
+      vx: 0,
+      trail: 0
     };
   }
 
@@ -351,6 +409,70 @@ function initDynamicStarfieldAndMeteor() {
 
   resize();
   window.addEventListener('resize', resize);
+
+  function triggerWarpExit(onComplete) {
+    warpMode = 'exit';
+    warpStartTime = performance.now();
+    warpDuration = 750;
+    meteor = null; // Clear meteors during hyperdrive
+
+    // Give each existing star an initial velocity to the right
+    stars.forEach(s => {
+      s.vx = Math.random() * 8 + 6;
+      s.trail = 20;
+      s.alpha = Math.max(s.alpha, 0.7);
+    });
+
+    setTimeout(() => {
+      warpMode = 'none';
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (onComplete) onComplete();
+    }, warpDuration);
+  }
+
+  function triggerWarpEnter() {
+    warpMode = 'enter';
+    warpStartTime = performance.now();
+    warpDuration = 850;
+    meteor = null;
+
+    // Spawn stars bursting in from the left edge of the screen
+    stars = [];
+    for (let i = 0; i < starCount; i++) {
+      const targetX = Math.random() * canvas.width;
+      const y = Math.random() * (canvas.height * 0.72);
+      stars.push({
+        x: -Math.random() * 350 - 50,
+        y: y,
+        targetX: targetX,
+        size: Math.random() * 2 + 1,
+        vx: Math.random() * 25 + 30,
+        trail: 140,
+        alpha: 1,
+        targetAlpha: Math.random() * 0.8 + 0.25,
+        fadeSpeed: Math.random() * 0.02 + 0.008,
+        state: 'hold',
+        holdTimer: Math.random() * 60 + 30,
+        isDot: Math.random() > 0.3
+      });
+    }
+
+    setTimeout(() => {
+      warpMode = 'none';
+      stars.forEach(s => {
+        s.trail = 0;
+        s.vx = 0;
+        s.state = 'fadeIn';
+      });
+      nextMeteorTime = Date.now() + 6000;
+    }, warpDuration);
+  }
+
+  // Expose to celestial cycle
+  window.starfieldController = {
+    triggerWarpExit,
+    triggerWarpEnter
+  };
 
   function spawnMeteor() {
     meteor = {
@@ -367,10 +489,83 @@ function initDynamicStarfieldAndMeteor() {
   }
 
   function render() {
-    if (document.body.getAttribute('data-theme') === 'dark') {
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+
+    if (warpMode === 'exit') {
+      // Speed of light exit to the right!
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const elapsed = performance.now() - warpStartTime;
+      const progress = Math.min(1, elapsed / warpDuration);
+
+      stars.forEach(s => {
+        s.vx += 2.4;
+        s.vx *= 1.08;
+        s.x += s.vx;
+        s.trail = Math.min(s.vx * 4.8, 550);
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, 1 - progress * 0.85);
+
+        // Blazing horizontal hyperdrive streak
+        const grad = ctx.createLinearGradient(s.x - s.trail, s.y, s.x, s.y);
+        grad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+        grad.addColorStop(0.5, 'rgba(96, 165, 250, 0.7)');
+        grad.addColorStop(1, '#FFFFFF');
+
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = Math.max(2, s.size * 1.5);
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(s.x - s.trail, s.y);
+        ctx.lineTo(s.x, s.y);
+        ctx.stroke();
+
+        // White star core
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size + 1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    } else if (warpMode === 'enter') {
+      // Speed of light entry from the left!
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const elapsed = performance.now() - warpStartTime;
+      const progress = Math.min(1, elapsed / warpDuration);
+
+      stars.forEach(s => {
+        const dx = s.targetX - s.x;
+        s.x += dx * 0.14;
+        s.trail = Math.max(0, dx * 0.45);
+
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, progress * 1.3);
+
+        if (s.trail > 4) {
+          const grad = ctx.createLinearGradient(s.x - s.trail, s.y, s.x, s.y);
+          grad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+          grad.addColorStop(0.6, 'rgba(147, 197, 253, 0.7)');
+          grad.addColorStop(1, '#FFFFFF');
+
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = Math.max(2, s.size * 1.5);
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(s.x - s.trail, s.y);
+          ctx.lineTo(s.x, s.y);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    } else if (isDark) {
+      // Normal Starfield in Night Mode: Twinkling / random respawning + occasional meteor
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Render & cycle stars across random places
       stars.forEach((s, idx) => {
         if (s.state === 'fadeIn') {
           s.alpha += s.fadeSpeed;
@@ -386,12 +581,10 @@ function initDynamicStarfieldAndMeteor() {
         } else if (s.state === 'fadeOut') {
           s.alpha -= s.fadeSpeed;
           if (s.alpha <= 0) {
-            // Respawn at a brand-new random location!
             stars[idx] = createStar();
           }
         }
 
-        // Draw star dot with black border (matches GIF style)
         if (s.alpha > 0) {
           ctx.save();
           ctx.globalAlpha = Math.max(0, Math.min(1, s.alpha));
@@ -405,7 +598,6 @@ function initDynamicStarfieldAndMeteor() {
             ctx.strokeStyle = '#000000';
             ctx.stroke();
           } else {
-            // Little 4-point sparkle
             ctx.fillStyle = '#F8FAFC';
             ctx.fillRect(s.x, s.y, s.size * 1.5, s.size * 1.5);
           }
@@ -413,7 +605,7 @@ function initDynamicStarfieldAndMeteor() {
         }
       });
 
-      // Occasional tiny meteor / shooting star trail
+      // Occasional tiny meteor
       if (!meteor && Date.now() > nextMeteorTime) {
         spawnMeteor();
       }
@@ -439,12 +631,10 @@ function initDynamicStarfieldAndMeteor() {
           );
           ctx.stroke();
 
-          // Glowing tip
           ctx.fillStyle = '#FFFFFF';
           ctx.beginPath();
           ctx.arc(meteor.x, meteor.y, 2.5, 0, Math.PI * 2);
           ctx.fill();
-
           ctx.restore();
         }
 
@@ -529,9 +719,22 @@ function initArchitectConsole() {
       `  <span class="term-yellow">capstone --stat</span>  - SINE MDRRMO production details`,
       `  <span class="term-yellow">philosophy</span>       - Core tenets: metal over bloat`,
       `  <span class="term-yellow">whoami</span>           - Identity coordinates (terajaki // teralabs)`,
+      `  <span class="term-yellow">theme</span>            - Toggle celestial horizon cycle (Day/Night)`,
       `  <span class="term-yellow">contact</span>          - Direct transmission channel`,
       `  <span class="term-yellow">clear</span>            - Clear terminal output`
     ],
+
+    theme: () => {
+      const toggle = document.getElementById('theme-toggle');
+      if (toggle) toggle.click();
+      return [`<span class="term-cyan">Executing orbital horizon sweep across viewport...</span>`];
+    },
+
+    mode: () => {
+      const toggle = document.getElementById('theme-toggle');
+      if (toggle) toggle.click();
+      return [`<span class="term-cyan">Executing orbital horizon sweep across viewport...</span>`];
+    },
 
     architect: () => [
       `<span class="term-green">[+] ARCHITECTURAL PRINCIPLES:</span>`,
