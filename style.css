@@ -139,14 +139,15 @@ a {
 /* Celestial Stage (Top Right Orbit Container) */
 .celestial-stage {
   position: absolute;
-  top: 35px;
-  right: 55px;
+  top: 110px;
+  right: 60px;
   width: 90px;
   height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: visible;
+  z-index: 5;
 }
 
 .celestial-body {
@@ -234,6 +235,7 @@ a {
 
 /* ==========================================================================
    CHILDHOOD CLASSIC PUFFY CLOUDS
+   Strictly behind all text and cards, placed outside headline bounds
    ========================================================================== */
 .clouds-layer {
   position: absolute;
@@ -242,11 +244,14 @@ a {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  z-index: 0; /* Strictly behind all content */
+  pointer-events: none;
 }
 
 .puffy-cloud-box {
   position: absolute;
   left: -240px;
+  pointer-events: none;
 }
 
 .puffy-cloud-svg {
@@ -264,28 +269,31 @@ a {
   transition: fill 0.4s ease, stroke 0.4s ease;
 }
 
+/* Cloud 1: High sky above hero text */
 .cloud-1 {
-  width: 150px;
-  height: 85px;
-  top: 90px;
-  animation: drift-cloud 46s linear infinite;
-  opacity: 0.95;
+  width: 140px;
+  height: 80px;
+  top: 15px;
+  animation: drift-cloud 48s linear infinite;
+  opacity: 0.55;
 }
 
+/* Cloud 2: Below hero actions and above marquee ribbon */
 .cloud-2 {
-  width: 210px;
-  height: 115px;
-  top: 240px;
-  animation: drift-cloud 72s linear infinite -18s;
-  opacity: 0.9;
+  width: 200px;
+  height: 110px;
+  top: 490px;
+  animation: drift-cloud 74s linear infinite -22s;
+  opacity: 0.5;
 }
 
+/* Cloud 3: Drifting softly behind lower work grid */
 .cloud-3 {
   width: 130px;
   height: 75px;
-  top: 500px;
-  animation: drift-cloud 58s linear infinite -34s;
-  opacity: 0.85;
+  top: 780px;
+  animation: drift-cloud 60s linear infinite -36s;
+  opacity: 0.45;
 }
 
 @keyframes drift-cloud {
@@ -1284,7 +1292,7 @@ a {
     align-self: flex-start;
   }
   .celestial-stage {
-    top: 55px;
+    top: 110px;
     right: 20px;
     width: 65px;
     height: 65px;

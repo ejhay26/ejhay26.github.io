@@ -251,33 +251,35 @@ function initCelestialCycle() {
           easing: 'easeOutElastic(1, .6)'
         });
 
-        // Sun sets below horizon
+        // Sun sets along an arched curve downwards and to the side
         anime({
           targets: sunEl,
-          translateY: [0, 150],
-          rotate: [0, 120],
-          scale: [1, 0.4],
+          translateX: [0, 160],
+          translateY: [0, 220],
+          rotate: [0, 180],
+          scale: [1, 0.3],
           opacity: [1, 0],
-          duration: 600,
-          easing: 'easeInBack'
+          duration: 800,
+          easing: 'cubicBezier(0.4, 0, 0.7, 0.2)'
         });
 
-        // Moon rises from horizon
+        // Moon rises from opposite side upwards along an arc into the sky
         anime({
           targets: moonEl,
-          translateY: [150, 0],
-          rotate: [-60, 0],
-          scale: [0.4, 1],
+          translateX: [-160, 0],
+          translateY: [220, 0],
+          rotate: [-90, 0],
+          scale: [0.3, 1],
           opacity: [0, 1],
-          duration: 850,
-          delay: 200,
-          easing: 'easeOutElastic(1, .6)'
+          duration: 950,
+          delay: 160,
+          easing: 'cubicBezier(0.2, 0.9, 0.3, 1.2)'
         });
       } else {
         // Instant layout
-        sunEl.style.transform = 'translateY(150px) scale(0.4)';
+        sunEl.style.transform = 'translate(160px, 220px) scale(0.3)';
         sunEl.style.opacity = '0';
-        moonEl.style.transform = 'translateY(0px) scale(1)';
+        moonEl.style.transform = 'translate(0px, 0px) scale(1)';
         moonEl.style.opacity = '1';
       }
     } else {
@@ -294,32 +296,34 @@ function initCelestialCycle() {
           easing: 'easeOutElastic(1, .6)'
         });
 
-        // Moon sets below horizon
+        // Moon sets downwards sideways along an arc
         anime({
           targets: moonEl,
-          translateY: [0, 150],
-          rotate: [0, 60],
-          scale: [1, 0.4],
+          translateX: [0, 160],
+          translateY: [0, 220],
+          rotate: [0, 120],
+          scale: [1, 0.3],
           opacity: [1, 0],
-          duration: 600,
-          easing: 'easeInBack'
+          duration: 800,
+          easing: 'cubicBezier(0.4, 0, 0.7, 0.2)'
         });
 
-        // Sun rises with spinning rays
+        // Sun rises from opposite side upwards along an arc with spinning rays
         anime({
           targets: sunEl,
-          translateY: [150, 0],
-          rotate: [-120, 0],
-          scale: [0.4, 1],
+          translateX: [-160, 0],
+          translateY: [220, 0],
+          rotate: [-180, 0],
+          scale: [0.3, 1],
           opacity: [0, 1],
-          duration: 900,
-          delay: 200,
-          easing: 'easeOutElastic(1, .6)'
+          duration: 950,
+          delay: 160,
+          easing: 'cubicBezier(0.2, 0.9, 0.3, 1.2)'
         });
       } else {
-        moonEl.style.transform = 'translateY(150px) scale(0.4)';
+        moonEl.style.transform = 'translate(160px, 220px) scale(0.3)';
         moonEl.style.opacity = '0';
-        sunEl.style.transform = 'translateY(0px) scale(1)';
+        sunEl.style.transform = 'translate(0px, 0px) scale(1)';
         sunEl.style.opacity = '1';
       }
     }
