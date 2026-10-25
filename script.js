@@ -1,6 +1,6 @@
 /**
- * EMMANUEL JOHN PEREZ (terajaki // teralabs) — PORTFOLIO CONTROLLER
- * Architectural Engine: Orbital Sky Sweep, Random Starfield & Meteor, Zero-Jitter Scroll
+ * EMMANUEL JOHN PEREZ (terajaki) — PORTFOLIO CONTROLLER
+ * Rigid-rotation sky transition, random starfield and meteor, zero-jitter scroll
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,24 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeroAnimations();
   initZeroJitterScroll();
   initProjectFilters();
-  initCelestialOrbitCycle();
-  initDynamicStarfieldAndMeteor();
-  initArchitectConsole();
+  initCelestialOrbitCycle(initStarfield());
+  initTerminal();
 });
 
 /* ==========================================================================
-   1. DISABLE RIGHT-CLICK & SELECTION
+   1. DISABLE RIGHT-CLICK & DRAG
    ========================================================================== */
 function initSecurityAndSelection() {
-  document.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    return false;
-  });
-
-  document.addEventListener('dragstart', (e) => {
-    e.preventDefault();
-    return false;
-  });
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+  document.addEventListener('dragstart', (e) => e.preventDefault());
 }
 
 /* ==========================================================================
@@ -34,7 +26,6 @@ function initSecurityAndSelection() {
 function initHeroAnimations() {
   if (typeof anime === 'undefined') return;
 
-  // Staggered Title Slam
   anime({
     targets: '.hero-line',
     translateY: [-50, 0],
@@ -44,7 +35,6 @@ function initHeroAnimations() {
     easing: 'easeOutElastic(1, .7)'
   });
 
-  // Sticker Pills Drop & Spring
   anime({
     targets: '.sticker-pill',
     scale: [0.3, 1],
@@ -55,7 +45,6 @@ function initHeroAnimations() {
     easing: 'easeOutBack'
   });
 
-  // Tagline & Hero Actions Slide-Up
   anime({
     targets: ['.hero-tagline-box', '.hero-actions'],
     translateY: [35, 0],
@@ -65,7 +54,6 @@ function initHeroAnimations() {
     easing: 'easeOutCubic'
   });
 
-  // Spec Card Pop-In from Right
   anime({
     targets: '.spec-card',
     translateX: [60, 0],
@@ -75,7 +63,6 @@ function initHeroAnimations() {
     easing: 'easeOutExpo'
   });
 
-  // Spec Rows Stagger
   anime({
     targets: '.spec-row',
     opacity: [0, 1],
@@ -85,46 +72,47 @@ function initHeroAnimations() {
     easing: 'easeOutQuad'
   });
 
-  // Parallax on spec card
+  // Mouse parallax on the spec card, one update per animation frame
   const heroCard = document.querySelector('.spec-card');
-  if (heroCard) {
+  if (heroCard && !window.matchMedia('(pointer: coarse)').matches) {
+    let frameId = 0;
+    let dx = 0;
+    let dy = 0;
     document.addEventListener('mousemove', (e) => {
-      const { clientX, clientY } = e;
-      const xOffset = (clientX / window.innerWidth - 0.5) * 8;
-      const yOffset = (clientY / window.innerHeight - 0.5) * 8;
-      heroCard.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+      dx = (e.clientX / window.innerWidth - 0.5) * 8;
+      dy = (e.clientY / window.innerHeight - 0.5) * 8;
+      if (frameId) return;
+      frameId = requestAnimationFrame(() => {
+        heroCard.style.transform = `translate(${dx}px, ${dy}px)`;
+        frameId = 0;
+      });
     });
   }
 }
 
 /* ==========================================================================
-   3. ZERO-JITTER SCROLL REVEAL (CSS HYSTERESIS PIPELINE)
-   Eliminates infinite oscillation when stopping at 2-5% scroll threshold
+   3. ZERO-JITTER SCROLL REVEAL
    ========================================================================== */
 function initZeroJitterScroll() {
+  const scrollCards = document.querySelectorAll('.scroll-card');
   if (!('IntersectionObserver' in window)) {
-    document.querySelectorAll('.scroll-card').forEach(el => el.classList.add('is-visible'));
+    scrollCards.forEach((el) => el.classList.add('is-visible'));
     return;
   }
 
-  const scrollCards = document.querySelectorAll('.scroll-card');
-
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       const el = entry.target;
-      // Trigger reveal when visible
+      const stamp = el.querySelector('.contact-stamp, .stamp-badge');
+
       if (entry.isIntersecting && entry.intersectionRatio > 0.05) {
         el.classList.add('is-visible');
-
-        // Stamp badge physics trigger once on enter
-        const stamp = el.querySelector('.contact-stamp, .stamp-badge');
         if (stamp && !stamp._animated) {
           stamp._animated = true;
-          const rot = parseFloat(stamp.getAttribute('data-rotate')) || 0;
           if (typeof anime !== 'undefined') {
             anime({
               targets: stamp,
-              rotate: [0, rot],
+              rotate: [0, parseFloat(stamp.getAttribute('data-rotate')) || 0],
               scale: [0.8, 1],
               duration: 700,
               delay: 100,
@@ -133,48 +121,36 @@ function initZeroJitterScroll() {
           }
         }
       } else if (!entry.isIntersecting && entry.intersectionRatio === 0) {
-        // Only reset when completely outside viewport, preventing edge jitter
+        // Reset only when fully outside the viewport to avoid edge jitter
         el.classList.remove('is-visible');
-        const stamp = el.querySelector('.contact-stamp, .stamp-badge');
         if (stamp) stamp._animated = false;
       }
     });
-  }, {
-    threshold: [0, 0.15],
-    rootMargin: '0px 0px -30px 0px'
-  });
+  }, { threshold: [0, 0.15], rootMargin: '0px 0px -30px 0px' });
 
-  scrollCards.forEach(el => observer.observe(el));
+  scrollCards.forEach((el) => observer.observe(el));
 }
 
 /* ==========================================================================
-   4. INTERACTIVE PROJECT FILTER
+   4. PROJECT FILTER
    ========================================================================== */
 function initProjectFilters() {
   const filterButtons = document.querySelectorAll('.filter-btn');
   const projectCards = document.querySelectorAll('.project-card');
 
-  filterButtons.forEach(btn => {
+  filterButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
-      filterButtons.forEach(b => b.classList.remove('active'));
+      filterButtons.forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
-
       const filterValue = btn.getAttribute('data-filter');
 
       if (typeof anime !== 'undefined') {
-        anime({
-          targets: btn,
-          scale: [0.9, 1],
-          duration: 250,
-          easing: 'easeOutBack'
-        });
+        anime({ targets: btn, scale: [0.9, 1], duration: 250, easing: 'easeOutBack' });
       }
 
-      projectCards.forEach(card => {
+      projectCards.forEach((card) => {
         const categories = (card.getAttribute('data-category') || '').split(' ');
-        const matches = filterValue === 'all' || categories.includes(filterValue);
-
-        if (matches) {
+        if (filterValue === 'all' || categories.includes(filterValue)) {
           card.style.display = 'flex';
           setTimeout(() => card.classList.add('is-visible'), 20);
         } else {
@@ -187,701 +163,636 @@ function initProjectFilters() {
 }
 
 /* ==========================================================================
-   5. CELESTIAL HORIZON ORBIT CYCLE (FULL SCREEN-WIDE PLANET HORIZON SWEEP)
-   Directly matched to GIF & requested celestial physics:
-   - Moon exits to the right of the entire screen along the horizon arc.
-   - Stars exit to the right with trails like speed of light.
-   - Sun enters from very left side of viewport and curves up across horizon.
-   - Puffy clouds slide in smoothly.
-   - Reverse: Sun & clouds exit to right, Moon enters from very left and curves up,
-     stars streak in from left with speed-of-light trails and settle into place.
+   5. THEME TRANSITION: ONE RIGID ROTATION
+   The whole sky rotates about a single pivot below the viewport, like a
+   night timelapse. The sun/moon, every star and its trail ride the same
+   circle, so each body travels one continuous arc: it rises from the
+   bottom-left, peaks at its resting spot at the top-right, and the outgoing
+   body keeps going down the far side. A curved wave edge (circle centred on
+   the bottom-left corner) reveals the new page (header, cards, text) while
+   the old look stays outside it. The sky layer is never frozen: stars, trails,
+   sun and moon keep animating across the whole screen. Everything is driven
+   by one anime.js timeline, and clicks are ignored while it runs.
    ========================================================================== */
-function initCelestialOrbitCycle() {
-  const toggleBtn = document.getElementById('theme-toggle');
-  const sunEl = document.getElementById('sky-sun');
-  const moonEl = document.getElementById('sky-moon');
-  const telemetryText = document.getElementById('telemetry-text');
+function initCelestialOrbitCycle(sky) {
+  const btn = document.getElementById('theme-toggle');
+  const sun = document.getElementById('sky-sun');
+  const moon = document.getElementById('sky-moon');
+  const wash = document.getElementById('sky-wash');
+  const ring = document.getElementById('sky-ring');
+  const telemetry = document.getElementById('telemetry-text');
+  if (!btn || !sun || !moon || !wash || !ring || typeof anime === 'undefined') return;
 
-  if (!toggleBtn || !sunEl || !moonEl) return;
+  const root = document.documentElement;
+  const clouds = document.querySelectorAll('.sliding-cloud');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DURATION = 1800;
+  const MARGIN = 160;
+  let running = false;
 
-  const themeLabel = toggleBtn.querySelector('.theme-label');
-  const themeIcon = toggleBtn.querySelector('.theme-icon');
+  function restCenter(el) {
+    el.style.transform = '';
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
 
-  const savedTheme = localStorage.getItem('ejhay26_theme') || 'light';
-  applyThemeState(savedTheme, false);
+  function moveTo(el, rest, pt) {
+    el.style.transform = `translate(${pt.x - rest.x}px, ${pt.y - rest.y}px)`;
+  }
 
-  toggleBtn.addEventListener('click', () => {
-    const currentTheme = document.body.getAttribute('data-theme') || 'light';
-    const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
-    applyThemeState(nextTheme, true);
-    localStorage.setItem('ejhay26_theme', nextTheme);
-  });
+  // Copies the running CSS animation phase (marquee, ribbon, birds) onto a clone
+  function syncAnimations(source, clone) {
+    const clones = clone.querySelectorAll('*');
+    source.querySelectorAll('*').forEach((el, i) => {
+      const target = clones[i].getAnimations();
+      el.getAnimations().forEach((anim, k) => {
+        if (target[k]) target[k].currentTime = anim.currentTime;
+      });
+    });
+  }
 
-  // Clicking directly on Sun or Moon in the sky also toggles the celestial cycle!
-  sunEl.addEventListener('click', () => toggleBtn.click());
-  moonEl.addEventListener('click', () => toggleBtn.click());
+  // Copy of the page content in its current (old) theme. It is shown only outside the
+  // wave, while the live page underneath switches to the new theme immediately.
+  function createThemeGhost() {
+    const theme = document.body.getAttribute('data-theme');
+    const marqueeHeight = document.querySelector('.top-marquee').offsetHeight;
+    const ghost = document.createElement('div');
+    ghost.className = 'theme-ghost';
+    ghost.setAttribute('aria-hidden', 'true');
+    ghost.inert = true;
 
-  function applyThemeState(theme, animate) {
-    document.body.setAttribute('data-theme', theme);
-    const screenW = window.innerWidth;
-    const screenH = window.innerHeight;
+    const page = document.createElement('div');
+    page.className = 'ghost-page';
+    page.setAttribute('data-theme', theme);
+    const stuckHeader = document.createElement('div');
+    stuckHeader.className = 'ghost-page';
+    stuckHeader.setAttribute('data-theme', theme);
 
-    if (theme === 'dark') {
-      themeLabel.textContent = 'DAY PAPER';
-      themeIcon.textContent = '[D]';
-      if (telemetryText) telemetryText.textContent = 'LUNAR // PHASE WAXING';
+    const pairs = [];
+    const copyInto = (selector, parent, hidden) => {
+      const source = document.querySelector(selector);
+      const clone = source.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id'));
+      if (hidden) clone.style.visibility = 'hidden';
+      parent.appendChild(clone);
+      pairs.push([source, clone]);
+    };
+    // The header keeps its place in the flow (hidden) and a second copy sticks to the viewport top
+    ['.top-marquee', '.site-header', 'main', '.site-footer'].forEach((selector) => {
+      copyInto(selector, page, selector === '.site-header');
+    });
+    copyInto('.site-header', stuckHeader, false);
+    ghost.append(page, stuckHeader);
 
-      if (animate && typeof anime !== 'undefined') {
-        // Toggle button tactile spin
-        anime({
-          targets: toggleBtn,
-          rotate: '+=360deg',
-          scale: [0.88, 1],
-          duration: 500,
-          easing: 'easeOutElastic(1, .6)'
-        });
-
-        // 1. Sun sets to the right of the entire screen along the downward orbital arc
-        anime({
-          targets: sunEl,
-          translateX: [0, screenW * 0.35 + 300],
-          translateY: [0, screenH * 0.45],
-          rotate: [0, 40],
-          scale: [1, 0.85],
-          opacity: [1, 1, 0],
-          duration: 1100,
-          easing: 'cubicBezier(0.4, 0, 0.7, 0.2)',
-          complete: () => {
-            sunEl.style.opacity = '0';
-          }
-        });
-
-        // 2. Daytime sliding clouds slide out to the right off-screen
-        anime({
-          targets: '.sliding-cloud',
-          translateX: [0, screenW * 0.35 + 300],
-          opacity: [1, 0],
-          duration: 900,
-          easing: 'cubicBezier(0.4, 0, 0.7, 0.2)'
-        });
-
-        // 3. Crescent Moon enters from the very left side of the viewport and curves up along horizon
-        moonEl.style.opacity = '1';
-        anime({
-          targets: moonEl,
-          translateX: [-(screenW * 0.75 + 350), 0],
-          translateY: [screenH * 0.45, -35, 0],
-          rotate: [-55, 0],
-          scale: [0.85, 1.05, 1],
-          opacity: [0, 1, 1],
-          duration: 1250,
-          delay: 80,
-          easing: 'cubicBezier(0.2, 0.9, 0.3, 1)'
-        });
-
-        // 4. Stars streak in from the left with trails like speed of light
-        if (window.starfieldController) {
-          window.starfieldController.triggerWarpEnter();
-        }
-      } else {
-        sunEl.style.transform = `translate(${screenW * 0.4 + 300}px, ${screenH * 0.5}px)`;
-        sunEl.style.opacity = '0';
-        moonEl.style.transform = 'translate(0px, 0px) scale(1)';
-        moonEl.style.opacity = '1';
-      }
-    } else {
-      // Switching to Day Paper
-      themeLabel.textContent = 'NIGHT SKY';
-      themeIcon.textContent = '[M]';
-      if (telemetryText) telemetryText.textContent = 'SOL // ZENITH 12:00';
-
-      if (animate && typeof anime !== 'undefined') {
-        anime({
-          targets: toggleBtn,
-          rotate: '+=360deg',
-          scale: [0.88, 1],
-          duration: 500,
-          easing: 'easeOutElastic(1, .6)'
-        });
-
-        // 1. Stars exit to the right with trails like speed of light!
-        if (window.starfieldController) {
-          window.starfieldController.triggerWarpExit();
-        }
-
-        // 2. Moon exits to the right of the entire screen along horizon arc
-        anime({
-          targets: moonEl,
-          translateX: [0, screenW * 0.35 + 300],
-          translateY: [0, screenH * 0.45],
-          rotate: [0, 40],
-          scale: [1, 0.85],
-          opacity: [1, 1, 0],
-          duration: 1100,
-          easing: 'cubicBezier(0.4, 0, 0.7, 0.2)',
-          complete: () => {
-            moonEl.style.opacity = '0';
-          }
-        });
-
-        // 3. Sun enters from the very left side of the viewport and arcs up across horizon
-        sunEl.style.opacity = '1';
-        anime({
-          targets: sunEl,
-          translateX: [-(screenW * 0.75 + 350), 0],
-          translateY: [screenH * 0.45, -35, 0],
-          rotate: [-55, 0],
-          scale: [0.85, 1.05, 1],
-          opacity: [0, 1, 1],
-          duration: 1250,
-          delay: 80,
-          easing: 'cubicBezier(0.2, 0.9, 0.3, 1)'
-        });
-
-        // 4. Clouds slide in from the left
-        anime({
-          targets: '.sliding-cloud',
-          translateX: [-350, 0],
-          opacity: [0, 1],
-          delay: anime.stagger(130, { start: 200 }),
-          duration: 1000,
-          easing: 'cubicBezier(0.2, 0.9, 0.3, 1)'
-        });
-      } else {
-        moonEl.style.transform = `translate(${screenW * 0.4 + 300}px, ${screenH * 0.5}px)`;
-        moonEl.style.opacity = '0';
-        sunEl.style.transform = 'translate(0px, 0px) scale(1)';
-        sunEl.style.opacity = '1';
-      }
+    function place() {
+      page.style.transform = `translateY(${-window.scrollY}px)`;
+      stuckHeader.style.top = `${Math.max(marqueeHeight - window.scrollY, 0)}px`;
     }
-  }
-}
+    place();
+    window.addEventListener('scroll', place, { passive: true });
+    document.body.appendChild(ghost);
+    pairs.forEach(([source, clone]) => syncAnimations(source, clone));
 
-/* ==========================================================================
-   6. DYNAMIC STARFIELD & SPEED-OF-LIGHT WARP TRAILS
-   ========================================================================== */
-function initDynamicStarfieldAndMeteor() {
-  const canvas = document.getElementById('sky-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-
-  let stars = [];
-  const starCount = 85;
-
-  let meteor = null;
-  let nextMeteorTime = Date.now() + 8000;
-
-  let warpMode = 'none'; // 'none', 'exit', 'enter'
-  let warpStartTime = 0;
-  let warpDuration = 800;
-
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    initStars();
-  }
-
-  function createStar() {
     return {
-      x: Math.random() * canvas.width,
-      y: Math.random() * (canvas.height * 0.72),
-      targetX: 0,
-      size: Math.random() * 2 + 1,
-      alpha: 0,
-      targetAlpha: Math.random() * 0.8 + 0.25,
-      fadeSpeed: Math.random() * 0.02 + 0.008,
-      state: 'fadeIn',
-      holdTimer: Math.random() * 60 + 30,
-      isDot: Math.random() > 0.3,
-      vx: 0,
-      trail: 0
+      destroy() {
+        window.removeEventListener('scroll', place);
+        ghost.remove();
+      }
     };
   }
 
-  function initStars() {
-    stars = [];
-    for (let i = 0; i < starCount; i++) {
-      const s = createStar();
-      s.alpha = Math.random() * s.targetAlpha;
-      stars.push(s);
+  function applyTheme(theme) {
+    const dark = theme === 'dark';
+    document.body.setAttribute('data-theme', theme);
+    btn.setAttribute('aria-checked', String(dark));
+    if (telemetry) telemetry.textContent = dark ? 'LUNAR // PHASE WAXING' : 'SOL // ZENITH 12:00';
+  }
+
+  function showRestingBody(theme) {
+    sun.classList.toggle('is-hidden', theme === 'dark');
+    moon.classList.toggle('is-hidden', theme !== 'dark');
+  }
+
+  function transition(next) {
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    const incoming = next === 'dark' ? moon : sun;
+    const outgoing = next === 'dark' ? sun : moon;
+    const rest = restCenter(incoming);
+    outgoing.style.transform = '';
+
+    // Circle whose apex is the resting spot and which reaches the bottom-left margin
+    const a = rest.x + MARGIN;
+    const b = H + MARGIN - rest.y;
+    const radius = (a * a + b * b) / (2 * b);
+    const sweep = Math.asin(Math.min(1, a / radius));
+    const pivot = { x: rest.x, y: rest.y + radius };
+    const onArc = (phi) => ({
+      x: pivot.x + radius * Math.sin(phi),
+      y: pivot.y - radius * Math.cos(phi)
+    });
+
+    running = true;
+    const maxR = Math.hypot(W, H) + 12;
+    const state = { rot: 0, wipe: 0 };
+    const geo = { pivot, sweep };
+    const starDir = next === 'dark' ? 'in' : 'out';
+    // Freeze the old look first: a copy of the page (ghost) and the old background colour (wash)
+    const ghost = createThemeGhost();
+    const bodyStyle = getComputedStyle(document.body);
+    wash.style.backgroundColor = bodyStyle.backgroundColor;
+    wash.style.backgroundImage = bodyStyle.backgroundImage;
+    wash.style.backgroundSize = bodyStyle.backgroundSize;
+    root.style.setProperty('--wave-cy', `${H}px`);
+    root.style.setProperty('--wave-r', '0px');
+    root.classList.add('theme-switching');
+    wash.style.visibility = 'visible';
+
+    // The live page switches to the new theme at once. The incoming body starts
+    // off-screen so it never shows at its resting spot.
+    sky.warp(starDir, 0, geo);
+    applyTheme(next);
+    incoming.classList.remove('is-hidden');
+    moveTo(incoming, rest, onArc(-sweep));
+
+    function render() {
+      moveTo(incoming, rest, onArc(-sweep * (1 - state.rot)));
+      moveTo(outgoing, rest, onArc(sweep * state.rot));
+      sky.warp(starDir, state.rot, geo);
+
+      const r = maxR * state.wipe;
+      root.style.setProperty('--wave-r', `${r}px`);
+      ring.style.width = `${2 * r}px`;
+      ring.style.height = `${2 * r}px`;
+      ring.style.left = `${-r}px`;
+      ring.style.top = `${H - r}px`;
+      ring.style.visibility = r > 6 ? 'visible' : 'hidden';
     }
+
+    function finish() {
+      incoming.style.transform = '';
+      outgoing.style.transform = '';
+      outgoing.classList.add('is-hidden');
+      btn.style.transform = '';
+      clouds.forEach((c) => { c.style.transform = ''; });
+      ring.style.visibility = 'hidden';
+      wash.style.visibility = 'hidden';
+      ghost.destroy();
+      root.style.removeProperty('--wave-r');
+      root.style.removeProperty('--wave-cy');
+      root.classList.remove('theme-switching');
+      sky.warp(null, 0, null);
+      running = false;
+    }
+
+    anime.timeline({ duration: DURATION, easing: 'linear', update: render, complete: finish })
+      .add({ targets: state, rot: 1, easing: 'easeInOutSine' }, 0)
+      .add({ targets: state, wipe: 1, easing: 'easeInOutCubic' }, 0)
+      .add({
+        targets: clouds,
+        translateX: next === 'light' ? [-W * 0.6, 0] : [0, W],
+        delay: anime.stagger(120),
+        easing: 'easeInOutCubic'
+      }, 0)
+      .add({ targets: btn, scale: [0.9, 1], duration: 450, easing: 'easeOutBack' }, 0);
+  }
+
+  function toggle() {
+    if (running) return;
+    const next = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('ejhay26_theme', next); } catch (_) { /* storage blocked */ }
+    if (reduceMotion) {
+      applyTheme(next);
+      showRestingBody(next);
+      sky.refresh();
+      return;
+    }
+    transition(next);
+  }
+
+  let saved = 'light';
+  try { saved = localStorage.getItem('ejhay26_theme') === 'dark' ? 'dark' : 'light'; } catch (_) { /* storage blocked */ }
+  applyTheme(saved);
+  showRestingBody(saved);
+  sky.refresh();
+
+  btn.addEventListener('click', toggle);
+  sun.addEventListener('click', toggle);
+  moon.addEventListener('click', toggle);
+}
+
+/* ==========================================================================
+   6. STARFIELD: RANDOM BLINKING STARS, METEORS, ROTATING STAR TRAILS
+   Idle night sky: stars fade in at random spots, hold, fade out and respawn
+   elsewhere, with an occasional meteor. During a theme transition each star
+   is rotated about the shared pivot, so its trail is a circular arc. The
+   canvas always stays in the background layer, and the loop only runs while
+   it has something to draw.
+   ========================================================================== */
+function initStarfield() {
+  const canvas = document.getElementById('sky-canvas');
+  const ctx = canvas ? canvas.getContext('2d') : null;
+  if (!ctx) return { warp() {}, refresh() {} };
+
+  const STAR_COUNT = 85;
+  const INK = '#0E0F12';
+  let w = 0;
+  let h = 0;
+  let stars = [];
+  let meteor = null;
+  let nextMeteorAt = performance.now() + 8000;
+  let warpDir = null;
+  let warpP = 0;
+  let geo = null;
+  let looping = false;
+
+  function createStar(visible) {
+    const targetAlpha = 0.35 + Math.random() * 0.65;
+    return {
+      x: Math.random() * w,
+      y: Math.random() * h * 0.72,
+      r: 1.5 + Math.random() * 2.5,
+      dot: Math.random() > 0.3,
+      alpha: visible ? Math.random() * targetAlpha : 0,
+      targetAlpha,
+      fadeSpeed: 0.008 + Math.random() * 0.02,
+      state: 'fadeIn',
+      hold: 30 + Math.random() * 60,
+      reach: 60 + Math.random() * 200
+    };
+  }
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    stars = Array.from({ length: STAR_COUNT }, () => createStar(true));
+    kick();
+  }
+
+  function drawShape(x, y, s) {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (s.dot) {
+      ctx.arc(x, y, s.r, 0, Math.PI * 2);
+    } else {
+      ctx.rect(x - s.r, y - s.r, s.r * 2, s.r * 2);
+    }
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  function rotateAbout(s, angle) {
+    const dx = s.x - geo.pivot.x;
+    const dy = s.y - geo.pivot.y;
+    const c = Math.cos(angle);
+    const n = Math.sin(angle);
+    return { x: geo.pivot.x + dx * c - dy * n, y: geo.pivot.y + dx * n + dy * c };
+  }
+
+  function drawWarp() {
+    const into = warpDir === 'in';
+    const head = into ? -geo.sweep * (1 - warpP) : geo.sweep * warpP;
+    const speed = into ? 1 - warpP : warpP;
+    const fade = into ? Math.min(1, warpP * 8) : 1;
+
+    for (const s of stars) {
+      if (into) {
+        s.alpha = s.targetAlpha;
+        s.state = 'hold';
+        s.hold = 30 + Math.random() * 60;
+      }
+      const span = geo.sweep * 0.18 * speed * (s.reach / 200);
+      ctx.globalAlpha = s.targetAlpha * fade;
+
+      if (span > 0.003) {
+        ctx.beginPath();
+        for (let i = 0; i <= 8; i++) {
+          const pt = rotateAbout(s, head - span * (1 - i / 8));
+          if (i) ctx.lineTo(pt.x, pt.y); else ctx.moveTo(pt.x, pt.y);
+        }
+        ctx.lineCap = 'butt';
+        ctx.strokeStyle = INK;
+        ctx.lineWidth = s.r * 2 + 5;
+        ctx.stroke();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = s.r * 2;
+        ctx.stroke();
+      }
+      const pos = rotateAbout(s, head);
+      drawShape(pos.x, pos.y, s);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawIdle(now) {
+    stars.forEach((s, i) => {
+      if (s.state === 'fadeIn') {
+        s.alpha += s.fadeSpeed;
+        if (s.alpha >= s.targetAlpha) {
+          s.alpha = s.targetAlpha;
+          s.state = 'hold';
+        }
+      } else if (s.state === 'hold') {
+        s.hold -= 1;
+        if (s.hold <= 0) s.state = 'fadeOut';
+      } else {
+        s.alpha -= s.fadeSpeed;
+        if (s.alpha <= 0) {
+          stars[i] = createStar(false);
+          return;
+        }
+      }
+      ctx.globalAlpha = Math.max(0, Math.min(1, s.alpha));
+      drawShape(s.x, s.y, s);
+    });
+    ctx.globalAlpha = 1;
+
+    if (!meteor && now > nextMeteorAt) {
+      meteor = {
+        x: w * 0.2 + Math.random() * w * 0.6,
+        y: 20 + Math.random() * h * 0.3,
+        len: 40 + Math.random() * 50,
+        speed: 12 + Math.random() * 8,
+        angle: ((35 + Math.random() * 10) * Math.PI) / 180,
+        life: 0
+      };
+      nextMeteorAt = now + 10000 + Math.random() * 12000;
+    }
+    if (!meteor) return;
+
+    meteor.life += 1;
+    meteor.x += Math.cos(meteor.angle) * meteor.speed;
+    meteor.y += Math.sin(meteor.angle) * meteor.speed;
+    const alpha = 1 - meteor.life / 35;
+    if (alpha <= 0) {
+      meteor = null;
+      return;
+    }
+    ctx.globalAlpha = alpha;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(meteor.x - Math.cos(meteor.angle) * meteor.len, meteor.y - Math.sin(meteor.angle) * meteor.len);
+    ctx.lineTo(meteor.x, meteor.y);
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 7;
+    ctx.stroke();
+    ctx.strokeStyle = '#FDE047';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  function frame(now) {
+    ctx.clearRect(0, 0, w, h);
+    const dark = document.body.getAttribute('data-theme') === 'dark';
+    if (warpDir && geo) {
+      drawWarp();
+    } else if (dark) {
+      drawIdle(now);
+    }
+    if (warpDir || dark) {
+      requestAnimationFrame(frame);
+    } else {
+      looping = false;
+    }
+  }
+
+  function kick() {
+    if (looping) return;
+    looping = true;
+    requestAnimationFrame(frame);
   }
 
   resize();
   window.addEventListener('resize', resize);
 
-  function triggerWarpExit(onComplete) {
-    warpMode = 'exit';
-    warpStartTime = performance.now();
-    warpDuration = 750;
-    meteor = null; // Clear meteors during hyperdrive
-
-    // Give each existing star an initial velocity to the right
-    stars.forEach(s => {
-      s.vx = Math.random() * 8 + 6;
-      s.trail = 20;
-      s.alpha = Math.max(s.alpha, 0.7);
-    });
-
-    setTimeout(() => {
-      warpMode = 'none';
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (onComplete) onComplete();
-    }, warpDuration);
-  }
-
-  function triggerWarpEnter() {
-    warpMode = 'enter';
-    warpStartTime = performance.now();
-    warpDuration = 850;
-    meteor = null;
-
-    // Spawn stars bursting in from the left edge of the screen
-    stars = [];
-    for (let i = 0; i < starCount; i++) {
-      const targetX = Math.random() * canvas.width;
-      const y = Math.random() * (canvas.height * 0.72);
-      stars.push({
-        x: -Math.random() * 350 - 50,
-        y: y,
-        targetX: targetX,
-        size: Math.random() * 2 + 1,
-        vx: Math.random() * 25 + 30,
-        trail: 140,
-        alpha: 1,
-        targetAlpha: Math.random() * 0.8 + 0.25,
-        fadeSpeed: Math.random() * 0.02 + 0.008,
-        state: 'hold',
-        holdTimer: Math.random() * 60 + 30,
-        isDot: Math.random() > 0.3
-      });
-    }
-
-    setTimeout(() => {
-      warpMode = 'none';
-      stars.forEach(s => {
-        s.trail = 0;
-        s.vx = 0;
-        s.state = 'fadeIn';
-      });
-      nextMeteorTime = Date.now() + 6000;
-    }, warpDuration);
-  }
-
-  // Expose to celestial cycle
-  window.starfieldController = {
-    triggerWarpExit,
-    triggerWarpEnter
+  return {
+    warp(dir, p, geometry) {
+      if (dir && !warpDir) meteor = null;
+      if (!dir && warpDir) nextMeteorAt = performance.now() + 6000;
+      warpDir = dir;
+      warpP = p;
+      geo = geometry;
+      kick();
+    },
+    refresh: kick
   };
-
-  function spawnMeteor() {
-    meteor = {
-      x: Math.random() * (canvas.width * 0.6) + canvas.width * 0.2,
-      y: Math.random() * (canvas.height * 0.3) + 20,
-      len: Math.random() * 50 + 40,
-      speed: Math.random() * 8 + 12,
-      angle: (35 + Math.random() * 10) * (Math.PI / 180),
-      alpha: 1,
-      life: 0,
-      maxLife: 35
-    };
-    nextMeteorTime = Date.now() + Math.random() * 12000 + 10000;
-  }
-
-  function render() {
-    const isDark = document.body.getAttribute('data-theme') === 'dark';
-
-    if (warpMode === 'exit') {
-      // Speed of light exit to the right!
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const elapsed = performance.now() - warpStartTime;
-      const progress = Math.min(1, elapsed / warpDuration);
-
-      stars.forEach(s => {
-        s.vx += 2.4;
-        s.vx *= 1.08;
-        s.x += s.vx;
-        s.trail = Math.min(s.vx * 4.8, 550);
-
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, 1 - progress * 0.85);
-
-        // Blazing horizontal hyperdrive streak
-        const grad = ctx.createLinearGradient(s.x - s.trail, s.y, s.x, s.y);
-        grad.addColorStop(0, 'rgba(255, 255, 255, 0)');
-        grad.addColorStop(0.5, 'rgba(96, 165, 250, 0.7)');
-        grad.addColorStop(1, '#FFFFFF');
-
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = Math.max(2, s.size * 1.5);
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(s.x - s.trail, s.y);
-        ctx.lineTo(s.x, s.y);
-        ctx.stroke();
-
-        // White star core
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size + 1, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      });
-    } else if (warpMode === 'enter') {
-      // Speed of light entry from the left!
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const elapsed = performance.now() - warpStartTime;
-      const progress = Math.min(1, elapsed / warpDuration);
-
-      stars.forEach(s => {
-        const dx = s.targetX - s.x;
-        s.x += dx * 0.14;
-        s.trail = Math.max(0, dx * 0.45);
-
-        ctx.save();
-        ctx.globalAlpha = Math.min(1, progress * 1.3);
-
-        if (s.trail > 4) {
-          const grad = ctx.createLinearGradient(s.x - s.trail, s.y, s.x, s.y);
-          grad.addColorStop(0, 'rgba(255, 255, 255, 0)');
-          grad.addColorStop(0.6, 'rgba(147, 197, 253, 0.7)');
-          grad.addColorStop(1, '#FFFFFF');
-
-          ctx.strokeStyle = grad;
-          ctx.lineWidth = Math.max(2, s.size * 1.5);
-          ctx.lineCap = 'round';
-          ctx.beginPath();
-          ctx.moveTo(s.x - s.trail, s.y);
-          ctx.lineTo(s.x, s.y);
-          ctx.stroke();
-        }
-
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      });
-    } else if (isDark) {
-      // Normal Starfield in Night Mode: Twinkling / random respawning + occasional meteor
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      stars.forEach((s, idx) => {
-        if (s.state === 'fadeIn') {
-          s.alpha += s.fadeSpeed;
-          if (s.alpha >= s.targetAlpha) {
-            s.alpha = s.targetAlpha;
-            s.state = 'hold';
-          }
-        } else if (s.state === 'hold') {
-          s.holdTimer--;
-          if (s.holdTimer <= 0) {
-            s.state = 'fadeOut';
-          }
-        } else if (s.state === 'fadeOut') {
-          s.alpha -= s.fadeSpeed;
-          if (s.alpha <= 0) {
-            stars[idx] = createStar();
-          }
-        }
-
-        if (s.alpha > 0) {
-          ctx.save();
-          ctx.globalAlpha = Math.max(0, Math.min(1, s.alpha));
-
-          if (s.isDot) {
-            ctx.fillStyle = '#FFFFFF';
-            ctx.beginPath();
-            ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = '#000000';
-            ctx.stroke();
-          } else {
-            ctx.fillStyle = '#F8FAFC';
-            ctx.fillRect(s.x, s.y, s.size * 1.5, s.size * 1.5);
-          }
-          ctx.restore();
-        }
-      });
-
-      // Occasional tiny meteor
-      if (!meteor && Date.now() > nextMeteorTime) {
-        spawnMeteor();
-      }
-
-      if (meteor) {
-        meteor.life++;
-        meteor.x += Math.cos(meteor.angle) * meteor.speed;
-        meteor.y += Math.sin(meteor.angle) * meteor.speed;
-        meteor.alpha = 1 - (meteor.life / meteor.maxLife);
-
-        if (meteor.alpha > 0) {
-          ctx.save();
-          ctx.globalAlpha = meteor.alpha;
-          ctx.strokeStyle = '#FDE047';
-          ctx.lineWidth = 2;
-          ctx.lineCap = 'round';
-
-          ctx.beginPath();
-          ctx.moveTo(meteor.x, meteor.y);
-          ctx.lineTo(
-            meteor.x - Math.cos(meteor.angle) * meteor.len,
-            meteor.y - Math.sin(meteor.angle) * meteor.len
-          );
-          ctx.stroke();
-
-          ctx.fillStyle = '#FFFFFF';
-          ctx.beginPath();
-          ctx.arc(meteor.x, meteor.y, 2.5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
-
-        if (meteor.life >= meteor.maxLife) {
-          meteor = null;
-        }
-      }
-    }
-
-    requestAnimationFrame(render);
-  }
-
-  requestAnimationFrame(render);
 }
 
 /* ==========================================================================
-   7. INTERACTIVE ARCHITECT CONSOLE (TYPEWRITER STREAM + GHOSTTY CURSOR)
+   7. INTERACTIVE TERMINAL
    ========================================================================== */
-function initArchitectConsole() {
-  const terminalScreen = document.getElementById('terminal-screen');
-  const termForm = document.getElementById('term-form');
-  const termInput = document.getElementById('term-input');
+function initTerminal() {
+  const screen = document.getElementById('terminal-screen');
+  const form = document.getElementById('term-form');
+  const input = document.getElementById('term-input');
   const cursorTrail = document.getElementById('cursor-trail');
   const chips = document.querySelectorAll('.term-chip');
-  const quickTermBtn = document.getElementById('quick-terminal-btn');
+  const quickBtn = document.getElementById('quick-terminal-btn');
+  let busy = false;
 
-  let isTypingOutput = false;
-
-  if (quickTermBtn) {
-    quickTermBtn.addEventListener('click', () => {
-      const termSection = document.getElementById('terminal');
-      if (termSection) {
-        termSection.scrollIntoView({ behavior: 'smooth' });
-        setTimeout(() => termInput && termInput.focus(), 600);
-      }
+  if (quickBtn) {
+    quickBtn.addEventListener('click', () => {
+      const section = document.getElementById('terminal');
+      if (!section) return;
+      section.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => input && input.focus(), 600);
     });
   }
 
-  // Metric measurement mirror for spring cursor
-  const textRuler = document.createElement('span');
-  textRuler.style.visibility = 'hidden';
-  textRuler.style.position = 'absolute';
-  textRuler.style.whiteSpace = 'pre';
-  textRuler.style.fontFamily = "'JetBrains Mono', monospace";
-  textRuler.style.fontSize = '0.9rem';
-  document.body.appendChild(textRuler);
+  // Hidden mirror used to measure the caret position for the block cursor
+  const ruler = document.createElement('span');
+  ruler.style.cssText = "visibility:hidden;position:absolute;white-space:pre;font-family:'JetBrains Mono',monospace;font-size:0.9rem;";
+  document.body.appendChild(ruler);
 
-  function updateCursorTrail() {
-    if (!termInput || !cursorTrail) return;
-    const textBeforeCaret = termInput.value.substring(0, termInput.selectionStart || 0);
-    textRuler.textContent = textBeforeCaret;
-    const measuredWidth = textRuler.getBoundingClientRect().width;
-
-    cursorTrail.style.transform = `translateX(${measuredWidth}px)`;
+  function updateCursor() {
+    if (!input || !cursorTrail) return;
+    ruler.textContent = input.value.substring(0, input.selectionStart || 0);
+    cursorTrail.style.transform = `translateX(${ruler.getBoundingClientRect().width}px)`;
     cursorTrail.style.width = '12px';
     clearTimeout(cursorTrail._stretchTimer);
-    cursorTrail._stretchTimer = setTimeout(() => {
-      cursorTrail.style.width = '9px';
-    }, 70);
+    cursorTrail._stretchTimer = setTimeout(() => { cursorTrail.style.width = '9px'; }, 70);
   }
 
-  if (termInput) {
-    termInput.addEventListener('input', updateCursorTrail);
-    termInput.addEventListener('keyup', updateCursorTrail);
-    termInput.addEventListener('click', updateCursorTrail);
-    termInput.addEventListener('focus', () => {
+  if (input) {
+    ['input', 'keyup', 'click'].forEach((evt) => input.addEventListener(evt, updateCursor));
+    input.addEventListener('focus', () => {
       if (cursorTrail) cursorTrail.style.opacity = '1';
-      updateCursorTrail();
+      updateCursor();
     });
-    termInput.addEventListener('blur', () => {
+    input.addEventListener('blur', () => {
       if (cursorTrail) cursorTrail.style.opacity = '0.5';
     });
   }
 
-  // Command library reflecting authentic Systems Architecture persona
+  const escapeHtml = (str) => str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const key = (label) => `<span class="term-pink">${label}</span>`;
+
+  // NixOS logo and info rendered together in one <pre> so spacing is preserved
+  function neofetch() {
+    const art = String.raw`  \\  \\ //
+ ==\\__\\/ //
+   //   \\//
+==//     //==
+ //\\___//
+// /\\  \\==
+  // \\  \\`.split('\n');
+    const info = [
+      `<span class="term-green">terajaki</span>@<span class="term-green">nixos</span>`,
+      '---------------',
+      `${key('OS')}: NixOS (after Fedora, Arch)`,
+      `${key('Shell')}: zsh`,
+      `${key('Editor')}: Neovim, VS Code`,
+      `${key('Languages')}: Rust, Go, PHP, Kotlin, Dart`,
+      `${key('Backend')}: Go (Fiber), Laravel`,
+      `${key('Data')}: PostgreSQL, MariaDB/MySQL, NoSQL`,
+      `${key('Desktop')}: Tauri (Rust)`,
+      `${key('Location')}: Philippines`
+    ];
+    const width = Math.max(...art.map((row) => row.length)) + 3;
+    const rows = info.map((text, i) => {
+      const left = (art[i] || '').padEnd(width);
+      return `<span class="term-cyan">${left}</span>${text}`;
+    });
+    return [`<pre class="term-pre">${rows.join('\n')}</pre>`];
+  }
+
   const commands = {
     help: () => [
-      `<span class="term-green">ARCHITECTURAL COMMANDS:</span>`,
-      `  <span class="term-yellow">architect</span>        - Architectural mindset & methodology`,
-      `  <span class="term-yellow">neofetch</span>         - System, persona & developer specs`,
-      `  <span class="term-yellow">cat stack.json</span>   - Complete toolchain matrix`,
-      `  <span class="term-yellow">capstone --stat</span>  - SINE MDRRMO production details`,
-      `  <span class="term-yellow">philosophy</span>       - Core tenets: metal over bloat`,
-      `  <span class="term-yellow">whoami</span>           - Identity coordinates (terajaki // teralabs)`,
-      `  <span class="term-yellow">theme</span>            - Toggle celestial horizon cycle (Day/Night)`,
-      `  <span class="term-yellow">contact</span>          - Direct transmission channel`,
-      `  <span class="term-yellow">clear</span>            - Clear terminal output`
+      `<span class="term-green">COMMANDS:</span>`,
+      `  <span class="term-yellow">about</span>            - How I like to build software`,
+      `  <span class="term-yellow">neofetch</span>         - System and tool summary`,
+      `  <span class="term-yellow">cat stack.json</span>   - Tools by area`,
+      `  <span class="term-yellow">capstone --stat</span>  - San Isidro NE capstone details`,
+      `  <span class="term-yellow">philosophy</span>       - What I optimise for`,
+      `  <span class="term-yellow">whoami</span>           - Who I am`,
+      `  <span class="term-yellow">theme</span>            - Switch day and night`,
+      `  <span class="term-yellow">contact</span>          - Email and GitHub`,
+      `  <span class="term-yellow">clear</span>            - Clear the screen`
     ],
 
     theme: () => {
-      const toggle = document.getElementById('theme-toggle');
-      if (toggle) toggle.click();
-      return [`<span class="term-cyan">Executing orbital horizon sweep across viewport...</span>`];
+      const toggleBtn = document.getElementById('theme-toggle');
+      if (toggleBtn) toggleBtn.click();
+      return [`<span class="term-cyan">Switching sky...</span>`];
     },
 
-    mode: () => {
-      const toggle = document.getElementById('theme-toggle');
-      if (toggle) toggle.click();
-      return [`<span class="term-cyan">Executing orbital horizon sweep across viewport...</span>`];
-    },
-
-    architect: () => [
-      `<span class="term-green">[+] ARCHITECTURAL PRINCIPLES:</span>`,
-      `  1. <strong>First-Principles Evaluation:</strong> Deeply dissect problem constraints before writing code.`,
-      `  2. <strong>Low-Level Execution:</strong> Prefer native Rust binaries, lean C/ASL kernel tables, and lightweight runtimes over heavy Electron memory hogs.`,
-      `  3. <strong>Resilience & Air-Gap:</strong> Architect systems (like LAN-Drive & Gabay) to function flawlessly in zero-connectivity or air-gapped environments.`,
-      `  4. <strong>Cross-Platform Mastery:</strong> Seamless orchestration across Linux (Wayland), macOS (OpenCore), Android, and Windows.`
+    about: () => [
+      `<span class="term-green">[+] HOW I BUILD:</span>`,
+      `  1. <strong>Close to the system:</strong> I prefer low-level languages because they run lighter and faster.`,
+      `  2. <strong>Tauri over Electron:</strong> Electron is heavy and slow to load. Tauri (Rust) skips Chromium, so it starts fast and stays small.`,
+      `  3. <strong>Scripting only where it fits:</strong> I use Python as a tool for automation and fetching data, not for core software.`,
+      `  4. <strong>Linux:</strong> Fedora first, then Arch, now NixOS.`
     ],
 
-    neofetch: () => [
-      `<span class="term-cyan">     .---.      terajaki@niri-box (teralabs)</span>`,
-      `<span class="term-cyan">    /     \\     ---------------------------</span>`,
-      `<span class="term-cyan">   | () () |    Role: Systems & Software Architect</span>`,
-      `<span class="term-cyan">    \\  _  /     OS: NixOS / Arch Linux (Wayland)</span>`,
-      `<span class="term-cyan">     \`---\`      Compositors: Niri (scrollable) / Hyprland</span>`,
-      `<span class="term-cyan">    /     \\     Location: Philippines</span>`,
-      `<span class="term-cyan">   / |   | \\    Established: 2025</span>`,
-      `<span class="term-pink">Persona:</span> Emmanuel John Perez (terajaki)`,
-      `<span class="term-pink">Lab:</span> teralabs`,
-      `<span class="term-pink">Shell:</span> zsh 5.9 + Starship prompt`,
-      `<span class="term-pink">Editor:</span> Neovim + VSCode`,
-      `<span class="term-pink">Core Toolchain:</span> Rust, Tauri v2, Laravel 13, Angular 20, Nix Flakes`
-    ],
+    neofetch,
 
     'cat stack.json': () => [
-      `<span class="term-yellow">{</span>`,
-      `  <span class="term-cyan">"architecture"</span>: "First-principles systems & platform engineering",`,
-      `  <span class="term-cyan">"desktop"</span>: ["Tauri v2", "Rust", "Capacitor 8"],`,
-      `  <span class="term-cyan">"backend"</span>: ["Laravel 13", "Laravel Reverb (WebSockets)", "MariaDB", "Sanctum"],`,
-      `  <span class="term-cyan">"frontend"</span>: ["Angular 20", "Ionic 8", "Pure Modern CSS"],`,
-      `  <span class="term-cyan">"mobile"</span>: ["Kotlin", "Flutter / Dart", "Offline Vector GIS"],`,
-      `  <span class="term-cyan">"systems"</span>: ["OpenCore EFI", "ACPI / ASL", "Nix Flakes", "Niri", "Hyprland"]`,
-      `<span class="term-yellow">}</span>`
+      `<pre class="term-pre"><span class="term-yellow">{</span>
+  <span class="term-cyan">"languages"</span>: ["Rust", "Go", "PHP", "Kotlin", "Dart", "Python (scripting)"],
+  <span class="term-cyan">"backend"</span>: ["Go (Fiber)", "Laravel", "Laravel Reverb"],
+  <span class="term-cyan">"databases"</span>: ["PostgreSQL", "MariaDB / MySQL", "NoSQL"],
+  <span class="term-cyan">"desktop"</span>: ["Tauri v2"],
+  <span class="term-cyan">"mobile"</span>: ["Ionic + Angular", "Kotlin", "Flutter"],
+  <span class="term-cyan">"os"</span>: ["NixOS", "Arch Linux", "Fedora"],
+  <span class="term-cyan">"next"</span>: ["Rust Dioxus", "Gin", "Java"]
+<span class="term-yellow">}</span></pre>`
     ],
 
     'capstone --stat': () => [
-      `<span class="term-green">[FLAGSHIP CAPSTONE] SINE MDRRMO PLATFORM:</span>`,
-      `  [+] Version: <span class="term-yellow">v0.75.0</span> (Production-grade capstone)`,
-      `  [+] Target: Municipal Disaster Risk Reduction and Management Office`,
-      `  [+] Realtime Engine: Sub-second WebSocket dispatch via Laravel Reverb`,
-      `  [+] Desktop Footprint: ~30MB native memory consumption via Tauri v2`,
-      `  [+] Citizen Access: Dual-sided government ID verification & offline GPS queue`
+      `<span class="term-green">[CAPSTONE] SAN ISIDRO NE PLATFORM:</span>`,
+      `  [+] Version: <span class="term-yellow">v0.75.0</span>`,
+      `  [+] For: Municipal Disaster Risk Reduction and Management Office, San Isidro`,
+      `  [+] Realtime: WebSocket dispatch via Laravel Reverb`,
+      `  [+] Desktop console: Tauri v2, about 30MB of RAM`,
+      `  [+] Citizen app: dual-sided ID verification and an offline GPS queue`
     ],
 
     philosophy: () => [
-      `<span class="term-cyan">ARCHITECTURE ETHOS:</span>`,
-      `  1. <strong>Snappy Over Heavy:</strong> 30MB of Tauri/Rust beats 200MB of Electron every single day.`,
-      `  2. <strong>Offline Resilient:</strong> Real-world software must work when cellular signals fail.`,
-      `  3. <strong>Zero AI Slop:</strong> Intentional architecture, verified code, zero buzzword soup.`
+      `<span class="term-cyan">WHAT I OPTIMISE FOR:</span>`,
+      `  1. <strong>Light over heavy:</strong> small binaries, fast startup, low memory.`,
+      `  2. <strong>Offline first:</strong> software should still work when the network does not.`,
+      `  3. <strong>Right database for the job:</strong> PostgreSQL, MariaDB/MySQL, or NoSQL depending on the data.`,
+      `  4. <strong>Readable code:</strong> plain naming, small modules, documented decisions.`
     ],
 
     whoami: () => [
-      `Emmanuel John Perez (terajaki // teralabs) · Systems & Software Architect · Philippines · EST. 2025`
+      `Emmanuel John Perez (terajaki) · BSIT student, NEUST San Isidro Campus · Philippines`
     ],
 
     contact: () => [
-      `Email: <a href="mailto:ejperez623@gmail.com" class="term-yellow" style="text-decoration: underline;">ejperez623@gmail.com</a>`,
-      `GitHub: <a href="https://github.com/ejhay26" target="_blank" class="term-cyan" style="text-decoration: underline;">https://github.com/ejhay26</a>`
+      `Email: <a href="mailto:ejcp2005@gmail.com" class="term-yellow" style="text-decoration: underline;">ejcp2005@gmail.com</a>`,
+      `GitHub: <a href="https://github.com/ejhay26" target="_blank" rel="noopener noreferrer" class="term-cyan" style="text-decoration: underline;">https://github.com/ejhay26</a>`
     ]
   };
+  commands.mode = commands.theme;
 
-  function streamLines(lines, onComplete) {
-    let lineIndex = 0;
-
-    function typeNextLine() {
-      if (lineIndex >= lines.length) {
-        isTypingOutput = false;
-        if (onComplete) onComplete();
+  function streamLines(lines) {
+    let index = 0;
+    function next() {
+      if (index >= lines.length) {
+        busy = false;
         return;
       }
-
-      const rawHtml = lines[lineIndex];
-      const lineDiv = document.createElement('div');
-      lineDiv.className = 'term-line';
-      terminalScreen.appendChild(lineDiv);
-
-      lineDiv.innerHTML = rawHtml;
-
+      const div = document.createElement('div');
+      div.className = 'term-line';
+      div.innerHTML = lines[index];
+      screen.appendChild(div);
       if (typeof anime !== 'undefined') {
-        anime({
-          targets: lineDiv,
-          opacity: [0, 1],
-          translateX: [4, 0],
-          duration: 110,
-          easing: 'easeOutQuad'
-        });
+        anime({ targets: div, opacity: [0, 1], translateX: [4, 0], duration: 110, easing: 'easeOutQuad' });
       }
-
-      terminalScreen.scrollTop = terminalScreen.scrollHeight;
-      lineIndex++;
-      setTimeout(typeNextLine, 30);
+      screen.scrollTop = screen.scrollHeight;
+      index += 1;
+      setTimeout(next, 30);
     }
-
-    typeNextLine();
+    next();
   }
 
-  function executeCommand(rawCmd) {
-    if (isTypingOutput) return;
+  function run(rawCmd) {
+    if (busy) return;
     const cmd = rawCmd.trim().toLowerCase();
     if (!cmd) return;
 
-    const echoDiv = document.createElement('div');
-    echoDiv.className = 'term-line';
-    echoDiv.innerHTML = `<span class="term-green">terajaki@box:~$</span> <span style="color:#FFF;">${escapeHtml(rawCmd)}</span>`;
-    terminalScreen.appendChild(echoDiv);
+    const echo = document.createElement('div');
+    echo.className = 'term-line';
+    echo.innerHTML = `<span class="term-green">terajaki@box:~$</span> <span style="color:#FFF;">${escapeHtml(rawCmd)}</span>`;
+    screen.appendChild(echo);
 
     if (cmd === 'clear') {
-      terminalScreen.innerHTML = '';
+      screen.innerHTML = '';
       return;
     }
 
-    isTypingOutput = true;
-    const lines = commands[cmd] ? commands[cmd]() : [
-      `<span class="term-dim">Command not found: "${escapeHtml(rawCmd)}". Type <span class="term-yellow">help</span> or <span class="term-yellow">architect</span>.</span>`
-    ];
-
-    streamLines(lines, () => {
-      terminalScreen.scrollTop = terminalScreen.scrollHeight;
-    });
+    busy = true;
+    const handler = Object.prototype.hasOwnProperty.call(commands, cmd) ? commands[cmd] : null;
+    streamLines(handler ? handler() : [
+      `<span class="term-dim">Command not found: "${escapeHtml(rawCmd)}". Type <span class="term-yellow">help</span>.</span>`
+    ]);
   }
 
-  if (termForm) {
-    termForm.addEventListener('submit', (e) => {
+  if (form) {
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const val = termInput.value;
-      termInput.value = '';
-      updateCursorTrail();
-      executeCommand(val);
+      const value = input.value;
+      input.value = '';
+      updateCursor();
+      run(value);
     });
   }
 
-  chips.forEach(chip => {
+  chips.forEach((chip) => {
     chip.addEventListener('click', () => {
-      const cmd = chip.getAttribute('data-cmd');
-      executeCommand(cmd);
+      run(chip.getAttribute('data-cmd'));
       if (typeof anime !== 'undefined') {
-        anime({
-          targets: chip,
-          scale: [0.88, 1],
-          duration: 200,
-          easing: 'easeOutBack'
-        });
+        anime({ targets: chip, scale: [0.88, 1], duration: 200, easing: 'easeOutBack' });
       }
     });
   });
-
-  function escapeHtml(str) {
-    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
 }

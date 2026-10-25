@@ -1,9 +1,10 @@
 /* ==========================================================================
-   NEOBRUTALISM DESIGN SYSTEM — EMMANUEL JOHN PEREZ (terajaki // teralabs)
+   NEOBRUTALISM DESIGN SYSTEM — EMMANUEL JOHN PEREZ (terajaki)
    Handcrafted. High contrast, tactile physics, authentic celestial motion.
    ========================================================================== */
 
-:root {
+:root,
+[data-theme="light"] {
   --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -11,7 +12,7 @@
   --color-yellow: #FFE600;
   --color-lime: #A3E635;
   --color-pink: #FF5E89;
-  --color-blue: #38BDF8;
+  --color-blue: #2F4BFF;
   --color-white: #FFFFFF;
   --color-black: #0E0F12;
 
@@ -26,6 +27,10 @@
   --shadow-offset: 5px;
   --card-bg: #FFFFFF;
   --card-bg-subtle: #FAFAF9;
+  --marquee-bg: #0E0F12;
+  --marquee-fg: #F6F3EB;
+  --badge-bg: #000000;
+  --badge-fg: #FFFFFF;
 
   /* Sizing & Transitions */
   --radius-sharp: 0px;
@@ -38,14 +43,18 @@
    MIDNIGHT BLUE NIGHT SKY THEME (DARK MODE - FROM DRIBBBLE GIF)
    ========================================================================== */
 [data-theme="dark"] {
-  --bg-page: #080E21;
-  --bg-dots: rgba(56, 189, 248, 0.08);
-  --text-main: #F8FAFC;
-  --text-muted: #94A3B8;
-  --border-color: #38BDF8;
-  --shadow-color: #020617;
-  --card-bg: #101B3B;
-  --card-bg-subtle: #172652;
+  --bg-page: #0A1640;
+  --bg-dots: rgba(244, 241, 232, 0.07);
+  --text-main: #F4F1E8;
+  --text-muted: #AEB8D6;
+  --border-color: #F4F1E8;
+  --shadow-color: #000000;
+  --card-bg: #11235E;
+  --card-bg-subtle: #182E78;
+  --marquee-bg: #000000;
+  --marquee-fg: #F4F1E8;
+  --badge-bg: #FDE047;
+  --badge-fg: #000000;
   --color-yellow: #FDE047;
   --color-lime: #4ADE80;
   --color-pink: #F472B6;
@@ -120,12 +129,61 @@ a {
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0;
-  transition: opacity 0.6s ease;
 }
 
-[data-theme="dark"] #sky-canvas {
-  opacity: 1;
+/* Theme wave: the old look stays outside a growing circle (a background layer plus a copy of the
+   page content), the live page shows inside it, and this black ring is drawn on the edge.
+   script.js sets --wave-r and --wave-cy. */
+.sky-ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10000;
+  pointer-events: none;
+  visibility: hidden;
+  border: 6px solid var(--color-black);
+  border-radius: 50%;
+}
+
+.sky-wash,
+.theme-ghost {
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(circle at 0px var(--wave-cy, 100%), transparent var(--wave-r, 0px), #000 calc(var(--wave-r, 0px) + 1px));
+  mask-image: radial-gradient(circle at 0px var(--wave-cy, 100%), transparent var(--wave-r, 0px), #000 calc(var(--wave-r, 0px) + 1px));
+}
+
+.sky-wash {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+
+.theme-ghost {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  overflow: hidden;
+}
+
+.ghost-page {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  font-family: var(--font-display);
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
+.is-hidden {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* Full-Screen Horizon Stage: bodies anchor to high sky but traverse the entire screen */
@@ -171,7 +229,6 @@ a {
 
 /* Crescent Moon Unit (Night Mode) - 100% Solid White SVG, Bold Black Border, Never Fainting */
 .sky-moon-unit {
-  opacity: 0;
   transform: translate(0, 0);
 }
 
@@ -191,7 +248,6 @@ a {
   width: 100vw;
   pointer-events: none;
   z-index: 1;
-  transition: opacity 0.5s ease;
 }
 
 .sliding-cloud {
@@ -210,20 +266,11 @@ a {
   left: clamp(180px, 32vw, 500px);
 }
 
-[data-theme="dark"] .daylight-sliding-clouds {
-  opacity: 0;
-}
-
 /* Daylight Flapping Birds */
 .daylight-birds {
   position: absolute;
   inset: 0;
-  transition: opacity 0.5s ease;
   pointer-events: none;
-}
-
-[data-theme="dark"] .daylight-birds {
-  opacity: 0;
 }
 
 .soaring-bird {
@@ -278,8 +325,8 @@ a {
    TOP MARQUEE
    ========================================================================== */
 .top-marquee {
-  background-color: var(--border-color);
-  color: var(--bg-page);
+  background-color: var(--marquee-bg);
+  color: var(--marquee-fg);
   padding: 8px 0;
   border-bottom: var(--border-width) solid var(--border-color);
   overflow: hidden;
@@ -290,12 +337,6 @@ a {
   letter-spacing: 0.05em;
   position: relative;
   z-index: 20;
-}
-
-[data-theme="dark"] .top-marquee {
-  background-color: #030712;
-  color: #38BDF8;
-  border-color: #38BDF8;
 }
 
 .marquee-track {
@@ -323,7 +364,6 @@ a {
   background-color: var(--bg-page);
   border-bottom: var(--border-width) solid var(--border-color);
   padding: 12px 0;
-  backdrop-filter: blur(8px);
 }
 
 .header-inner {
@@ -336,19 +376,20 @@ a {
 .logo-box {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-weight: 800;
   font-size: 1.15rem;
+  pointer-events: none;
 }
 
-.logo-symbol {
+.logo-avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
   background-color: var(--color-yellow);
-  color: #000;
-  padding: 4px 8px;
   border: 2px solid var(--border-color);
   box-shadow: 2px 2px 0px var(--shadow-color);
   border-radius: var(--radius-sm);
-  font-family: var(--font-mono);
 }
 
 .header-telemetry {
@@ -369,7 +410,7 @@ a {
   height: 9px;
   border-radius: 50%;
   background-color: #22C55E;
-  box-shadow: 0 0 8px #22C55E;
+  border: 2px solid var(--border-color);
   animation: pulse-dot 2s infinite ease-in-out;
 }
 
@@ -463,11 +504,47 @@ a {
 .btn-lime   { background-color: var(--color-lime); color: #000; }
 .btn-pink   { background-color: var(--color-pink); color: #000; }
 .btn-white  { background-color: var(--card-bg); color: var(--text-main); }
-.btn-accent { background-color: var(--color-yellow); color: #000; }
+/* Day / Night switch: two independent options, the active one is filled */
+.theme-switch {
+  display: inline-flex;
+  overflow: hidden;
+  background-color: var(--card-bg);
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--shadow-color);
+  border-radius: var(--radius-sm);
+}
 
-[data-theme="dark"] .btn-accent {
-  background-color: var(--color-lime);
+.theme-switch-opt {
+  padding: 7px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+}
+
+.theme-switch-opt + .theme-switch-opt {
+  border-left: var(--border-width) solid var(--border-color);
+}
+
+.theme-switch-opt:hover {
+  color: var(--text-main);
+}
+
+.theme-switch-opt[aria-checked="true"] {
   color: #000;
+  cursor: default;
+}
+
+.theme-switch-opt[aria-checked="true"][data-opt="light"] {
+  background-color: var(--color-yellow);
+}
+
+.theme-switch-opt[aria-checked="true"][data-opt="dark"] {
+  background-color: var(--color-lime);
 }
 
 .sticker-pill {
@@ -547,8 +624,8 @@ a {
 
 .hero-tagline-box {
   background: var(--card-bg);
-  border-left: 6px solid var(--color-lime);
   border: var(--border-width) solid var(--border-color);
+  border-left: 10px solid var(--color-lime);
   padding: 16px 20px;
   margin-bottom: 32px;
   box-shadow: 4px 4px 0px var(--shadow-color);
@@ -852,18 +929,41 @@ a {
 .tech-pill-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 10px;
+  align-items: center;
   margin-bottom: 24px;
   margin-top: auto;
 }
 
 .tech-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
   background: var(--card-bg-subtle);
-  border: 1.5px solid var(--border-color);
-  padding: 2px 8px;
+  border: 2px solid var(--border-color);
+  box-shadow: 2px 2px 0px var(--shadow-color);
+  padding: 3px 9px;
+}
+
+.stack-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background-color: #FFFFFF;
+  border: 3px solid var(--border-color);
+  box-shadow: 3px 3px 0px var(--shadow-color);
+  border-radius: var(--radius-sm);
+}
+
+.stack-logo {
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
 }
 
 .card-footer-actions {
@@ -952,9 +1052,16 @@ a {
   word-break: break-word;
 }
 
+.term-pre {
+  font: inherit;
+  line-height: 1.5;
+  white-space: pre;
+  overflow-x: auto;
+}
+
 .term-green  { color: #4ADE80; font-weight: 700; }
 .term-yellow { color: #FACC15; font-weight: 700; }
-.term-cyan   { color: #38BDF8; font-weight: 700; }
+.term-cyan   { color: #F4F1E8; font-weight: 700; }
 .term-pink   { color: #F472B6; font-weight: 700; }
 .term-dim    { color: #64748B; }
 
@@ -1038,7 +1145,6 @@ a {
   background-color: var(--color-lime);
   pointer-events: none;
   z-index: 1;
-  box-shadow: 0 0 10px var(--color-lime);
   transition: transform 0.08s cubic-bezier(0.2, 0.9, 0.3, 1.2), width 0.1s ease;
   animation: cursor-blink 1s step-start infinite;
 }
@@ -1077,15 +1183,10 @@ a {
   font-family: var(--font-mono);
   font-weight: 800;
   font-size: 0.85rem;
-  background: #000;
-  color: #FFF;
+  background: var(--badge-bg);
+  color: var(--badge-fg);
   padding: 2px 6px;
   border-radius: 2px;
-}
-
-[data-theme="dark"] .category-badge {
-  background: #38BDF8;
-  color: #000;
 }
 
 .category-name {

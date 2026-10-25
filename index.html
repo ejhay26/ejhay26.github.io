@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Emmanuel John Perez (terajaki) — Systems &amp; Software Architect</title>
-  <meta name="description" content="Portfolio of Emmanuel John Perez (terajaki // teralabs). Systems & Software Architect. First-principles engineering, low-level multi-OS platforms, and resilient full-stack systems.">
+  <title>Emmanuel John Perez (terajaki) — Software Developer</title>
+  <meta name="description" content="Portfolio of Emmanuel John Perez (terajaki). BSIT student and software developer working with Rust, Go, and Laravel, with an interest in Linux and lightweight native apps.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
@@ -12,7 +12,13 @@
 </head>
 <body data-theme="light">
   <!-- Full-Page Celestial Sky & Orbital Sweep Layer (Directly from GIF Concept) -->
+  <!-- Wave edge line for the theme transition (above all page content) -->
+  <div class="sky-ring" id="sky-ring" aria-hidden="true"></div>
+
   <div class="celestial-sky-backdrop" id="celestial-backdrop" aria-hidden="true">
+    <!-- Old background colour, kept outside the theme wave while it runs -->
+    <div class="sky-wash" id="sky-wash"></div>
+
     <!-- Starfield & Meteor Canvas (Runs randomized blinking stars & shooting meteors) -->
     <canvas id="sky-canvas"></canvas>
 
@@ -107,21 +113,19 @@
   <!-- Top Marquee Bar -->
   <aside class="top-marquee" aria-label="Announcement ticker">
     <div class="marquee-track">
-      <span>// ZERO AI SLOP :: HANDCRAFTED ARCHITECTURE</span>
-      <span>// TERAJAKI // TERALABS</span>
+      <span>// TERAJAKI</span>
       <span>// TAURI v2 &amp; RUST CORE</span>
-      <span>// LARAVEL 13 &amp; REVERB WEBSOCKETS</span>
-      <span>// ANGULAR 20 &amp; IONIC 8</span>
-      <span>// HYPRLAND &amp; NIRI WAYLAND</span>
-      <span>// SINE MDRRMO CAPSTONE</span>
+      <span>// GO &amp; FIBER</span>
+      <span>// LARAVEL &amp; REVERB WEBSOCKETS</span>
+      <span>// NIXOS</span>
+      <span>// SAN ISIDRO NE CAPSTONE</span>
       <span>// EST. 2025</span>
-      <span>// ZERO AI SLOP :: HANDCRAFTED ARCHITECTURE</span>
-      <span>// TERAJAKI // TERALABS</span>
+      <span>// TERAJAKI</span>
       <span>// TAURI v2 &amp; RUST CORE</span>
-      <span>// LARAVEL 13 &amp; REVERB WEBSOCKETS</span>
-      <span>// ANGULAR 20 &amp; IONIC 8</span>
-      <span>// HYPRLAND &amp; NIRI WAYLAND</span>
-      <span>// SINE MDRRMO CAPSTONE</span>
+      <span>// GO &amp; FIBER</span>
+      <span>// LARAVEL &amp; REVERB WEBSOCKETS</span>
+      <span>// NIXOS</span>
+      <span>// SAN ISIDRO NE CAPSTONE</span>
       <span>// EST. 2025</span>
     </div>
   </aside>
@@ -129,10 +133,10 @@
   <!-- Sticky Header -->
   <header class="site-header">
     <div class="header-inner container">
-      <a href="#" class="logo-box">
-        <span class="logo-symbol">TJ</span>
-        <span class="logo-text">terajaki // teralabs</span>
-      </a>
+      <div class="logo-box">
+        <img class="logo-avatar" src="https://github.com/ejhay26.png?size=80" alt="GitHub profile picture of ejhay26" width="40" height="40">
+        <span class="logo-text">terajaki</span>
+      </div>
 
       <div class="header-telemetry" id="header-telemetry">
         <span class="telemetry-dot"></span>
@@ -146,10 +150,10 @@
         <a href="#contact" class="nav-link">CONTACT</a>
       </nav>
 
-      <!-- Celestial Theme Toggle Button -->
-      <button id="theme-toggle" class="brutal-btn btn-sm btn-accent" aria-label="Toggle celestial day and night theme">
-        <span class="theme-icon">[M]</span>
-        <span class="theme-label">NIGHT SKY</span>
+      <!-- Day / Night switch: shows the current mode, click to flip it -->
+      <button id="theme-toggle" class="brutal-btn theme-switch" role="switch" aria-checked="false" aria-label="Night mode">
+        <span class="theme-switch-opt" data-opt="light">DAY</span>
+        <span class="theme-switch-opt" data-opt="dark">NIGHT</span>
       </button>
     </div>
   </header>
@@ -173,8 +177,8 @@
               </svg>
               <span>PHILIPPINES</span>
             </span>
-            <span class="sticker-pill tag-lime" data-rotate="2">ROLE // SYSTEMS ARCHITECT</span>
-            <span class="sticker-pill tag-yellow" data-rotate="-1">ARCH // FIRST-PRINCIPLES</span>
+            <span class="sticker-pill tag-lime" data-rotate="2">BSIT STUDENT</span>
+            <span class="sticker-pill tag-yellow" data-rotate="-1">LOW-LEVEL FIRST</span>
             <span class="sticker-pill tag-pink" data-rotate="3">EST. 2025</span>
           </div>
 
@@ -185,13 +189,13 @@
 
           <div class="hero-tagline-box">
             <p class="hero-tagline">
-              <strong>Systems &amp; Software Architect.</strong> I analyze problem domains from first principles, architect resilient cross-platform stacks, and engineer solutions that eliminate underlying bottlenecks as close to the metal as possible. No cookie-cutter templates—just snappy code built to endure.
+              <strong>Software developer and BSIT student.</strong> I build lightweight desktop, mobile, and backend software, and I like working close to the operating system. My capstone is a dispatch system for the San Isidro MDRRMO.
             </p>
           </div>
 
           <div class="hero-actions">
             <a href="#work" class="brutal-btn btn-lg btn-yellow btn-depress">
-              <span>EXPLORE ARCHITECTURES</span>
+              <span>SEE PROJECTS</span>
               <span class="btn-arrow">[v]</span>
             </a>
             <a href="https://github.com/ejhay26" target="_blank" rel="noopener noreferrer" class="brutal-btn btn-lg btn-white btn-depress">
@@ -199,7 +203,7 @@
               <span class="btn-arrow">[->]</span>
             </a>
             <button id="quick-terminal-btn" class="brutal-btn btn-lg btn-lime btn-depress">
-              <span>RUN ARCHITECT CLI</span>
+              <span>OPEN TERMINAL</span>
             </button>
           </div>
         </div>
@@ -208,9 +212,8 @@
           <!-- Developer Architectural Spec Card -->
           <div class="spec-card brutal-card">
             <div class="spec-card-header">
-              <span class="spec-card-title">ARCHITECT_SPEC.TXT</span>
+              <span class="spec-card-title">SPEC.TXT</span>
               <div class="header-tags">
-                <span class="spec-mini-tag">TERALABS</span>
                 <span class="spec-mini-tag">EST. 2025</span>
               </div>
             </div>
@@ -221,7 +224,7 @@
               </div>
               <div class="spec-row">
                 <span class="spec-key">DISCIPLINE:</span>
-                <span class="spec-val">Systems Architecture &amp; BSIT</span>
+                <span class="spec-val">BSIT, Database Systems Technology</span>
               </div>
               <div class="spec-row">
                 <span class="spec-key">INSTITUTION:</span>
@@ -229,20 +232,20 @@
               </div>
               <div class="spec-row">
                 <span class="spec-key">ENV RIG:</span>
-                <span class="spec-val">NixOS + Niri / Hyprland + OpenCore</span>
+                <span class="spec-val">NixOS</span>
               </div>
               <div class="spec-row">
                 <span class="spec-key">CORE STACK:</span>
-                <span class="spec-val highlight-lime">Tauri v2 · Rust · Laravel 13 · Angular 20</span>
+                <span class="spec-val highlight-lime">Rust · Go · Laravel · Tauri</span>
               </div>
               <div class="spec-row">
                 <span class="spec-key">GITHUB ACTIVITY:</span>
-                <span class="spec-val highlight-yellow">1,150+ Verified Commits</span>
+                <span class="spec-val highlight-yellow">1,150+ GitHub contributions</span>
               </div>
             </div>
             <div class="spec-card-footer">
               <div class="stamp-badge" data-rotate="-3">
-                <span>TERALABS // ARCHITECT</span>
+                <span>EJHAY26</span>
               </div>
             </div>
           </div>
@@ -254,7 +257,7 @@
     <div class="ribbon-wrapper">
       <div class="ribbon ribbon-yellow">
         <div class="ribbon-text">
-          TAURI v2 // LARAVEL 13 // ANGULAR 20 // IONIC 8 // CAPACITOR 8 // RUST // MARIADB // LARAVEL REVERB // KOTLIN // WAYLAND // HYPRLAND // NIRI // NIXOS // OPENDISPATCH //
+          TAURI // RUST // GO // FIBER // LARAVEL // POSTGRESQL // MARIADB // KOTLIN // FLUTTER // NIXOS // TAURI // RUST // GO // FIBER // LARAVEL // POSTGRESQL // MARIADB // KOTLIN // FLUTTER // NIXOS //
         </div>
       </div>
     </div>
@@ -264,15 +267,14 @@
       <div class="section-header">
         <div>
           <span class="section-eyebrow">// PROOF OF WORK &amp; REPOSITORIES</span>
-          <h2 class="section-title">ENGINEERED REALITY</h2>
+          <h2 class="section-title">PROJECTS</h2>
         </div>
         
         <!-- Filter Controls -->
         <div class="filter-group" role="tablist" aria-label="Project Filters">
-          <button class="filter-btn active" data-filter="all">ALL (6)</button>
+          <button class="filter-btn active" data-filter="all">ALL (4)</button>
           <button class="filter-btn" data-filter="systems">SYSTEMS &amp; DESKTOP</button>
           <button class="filter-btn" data-filter="fullstack">FULL-STACK &amp; REALTIME</button>
-          <button class="filter-btn" data-filter="ricing">RICING &amp; LOW-LEVEL</button>
         </div>
       </div>
 
@@ -287,39 +289,38 @@
           
           <h3 class="project-title">
             <a href="https://github.com/ejhay26/Location-based-Emergency-Response-App-for-SINE-MDRRMO" target="_blank" rel="noopener noreferrer">
-              Location-Based Emergency Response Platform (SINE MDRRMO)
+              San Isidro NE Location-Based Emergency Response Platform
             </a>
           </h3>
 
           <p class="project-summary">
-            A comprehensive, mission-critical emergency dispatch and citizen crisis reporting ecosystem built for the Municipal Disaster Risk Reduction &amp; Management Office in San Isidro, Nueva Ecija.
+            An emergency dispatch and citizen reporting system built for the Municipal Disaster Risk Reduction &amp; Management Office in San Isidro, Nueva Ecija.
           </p>
 
           <div class="project-highlights">
             <div class="highlight-item">
               <span class="highlight-badge">[01]</span>
-              <span><strong>Tauri v2 (Rust) Desktop Console:</strong> High-performance dispatcher application operating at ~30MB RAM with native OS notifications and frameless controls.</span>
+              <span><strong>Tauri v2 (Rust) Desktop Console:</strong> Dispatcher desktop app using about 30MB of RAM, with native OS notifications and a frameless window.</span>
             </div>
             <div class="highlight-item">
               <span class="highlight-badge">[02]</span>
-              <span><strong>Sub-Second Realtime Broadcasting:</strong> Geospatial incident tracking and alert resolution powered by Laravel 13 &amp; Laravel Reverb WebSockets.</span>
+              <span><strong>Realtime Broadcasting:</strong> Incident tracking and alert resolution over Laravel 13 &amp; Laravel Reverb WebSockets.</span>
             </div>
             <div class="highlight-item">
               <span class="highlight-badge">[03]</span>
-              <span><strong>Citizen Mobile (Ionic 8 / Angular 20):</strong> One-tap SOS, dual-sided government ID verification, and offline GPS queueing.</span>
+              <span><strong>Citizen Mobile App (Ionic + Angular):</strong> One-tap SOS, dual-sided government ID verification, and offline GPS queueing.</span>
             </div>
           </div>
 
           <div class="tech-pill-list">
-            <span class="tech-pill">Tauri v2</span>
-            <span class="tech-pill">Rust</span>
-            <span class="tech-pill">Laravel 13</span>
-            <span class="tech-pill">Laravel Reverb</span>
-            <span class="tech-pill">Angular 20</span>
-            <span class="tech-pill">Ionic 8</span>
-            <span class="tech-pill">Capacitor 8</span>
-            <span class="tech-pill">MariaDB</span>
-            <span class="tech-pill">Docker/Podman</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/tauri.svg" alt="" width="16" height="16">Tauri v2</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/rust.svg" alt="" width="16" height="16">Rust</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/laravel.svg" alt="" width="16" height="16">Laravel 13</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/laravel.svg" alt="" width="16" height="16">Laravel Reverb</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/ionic.svg" alt="" width="16" height="16"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/angular.svg" alt="" width="16" height="16">Ionic + Angular</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/capacitor.svg" alt="" width="16" height="16">Capacitor</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/mariadb.svg" alt="" width="16" height="16">MariaDB</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/docker.svg" alt="" width="16" height="16">Docker/Podman</span>
           </div>
 
           <div class="card-footer-actions">
@@ -345,7 +346,7 @@
           </h3>
 
           <p class="project-summary">
-            A local file synchronization and workspace management tool designed for secure computer laboratory and office LANs. Engineered for zero cloud latency, instant workspace provisioning, and complete data privacy without internet dependencies.
+            A local file synchronization and workspace management tool designed for secure computer laboratory and office LANs. Runs on the local network with no internet or cloud dependency.
           </p>
 
           <div class="tech-pill-list">
@@ -377,12 +378,12 @@
           </h3>
 
           <p class="project-summary">
-            A resilient offline navigation companion with an integrated local agent designed for zones with zero cellular connectivity. Employs vector tile pre-caching and device-side routing logic.
+            An offline navigation app with a local agent, for areas with no cell signal. It caches vector map tiles and routes on the device.
           </p>
 
           <div class="tech-pill-list">
-            <span class="tech-pill">Kotlin</span>
-            <span class="tech-pill">Android SDK</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/kotlin.svg" alt="" width="16" height="16">Kotlin</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/android.svg" alt="" width="16" height="16">Android SDK</span>
             <span class="tech-pill">Offline GIS</span>
             <span class="tech-pill">Local Agent</span>
           </div>
@@ -409,12 +410,12 @@
           </h3>
 
           <p class="project-summary">
-            Self-hosted synchronized watch party application featuring synchronized multi-user video playback, low-latency live messaging, and shared queue controls built for friends and teams.
+            A self-hosted watch party app with synced video playback, live chat, and a shared queue.
           </p>
 
           <div class="tech-pill-list">
-            <span class="tech-pill">Dart</span>
-            <span class="tech-pill">Flutter</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/dart.svg" alt="" width="16" height="16">Dart</span>
+            <span class="tech-pill"><img class="stack-logo" src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/flutter.svg" alt="" width="16" height="16">Flutter</span>
             <span class="tech-pill">Video Sync</span>
             <span class="tech-pill">Realtime Chat</span>
           </div>
@@ -426,103 +427,38 @@
             </a>
           </div>
         </article>
-
-        <!-- Project 5: Wayland Ricing (Niri & Hyprland) -->
-        <article class="project-card brutal-card scroll-card" data-category="ricing systems">
-          <div class="card-badge-row">
-            <span class="project-tag tag-yellow">DESKTOP RICING</span>
-            <span class="project-tag tag-pink">WAYLAND</span>
-          </div>
-
-          <h3 class="project-title">
-            <a href="https://github.com/ejhay26/myNiri" target="_blank" rel="noopener noreferrer">
-              myNiri &amp; myHyprland Configurations
-            </a>
-          </h3>
-
-          <p class="project-summary">
-            Handcrafted Wayland dotfiles featuring dynamic tiling with Hyprland and scrollable tiling windows with Niri. Configured with custom dynamic statusbars, snappier animations, and minimal resource footprints.
-          </p>
-
-          <div class="tech-pill-list">
-            <span class="tech-pill">Niri Compositor</span>
-            <span class="tech-pill">Hyprland</span>
-            <span class="tech-pill">Nix Flakes</span>
-            <span class="tech-pill">Lua / Bash</span>
-          </div>
-
-          <div class="card-footer-actions">
-            <a href="https://github.com/ejhay26/myNiri" target="_blank" rel="noopener noreferrer" class="brutal-btn btn-sm btn-white btn-depress">
-              <span>VIEW REPO</span>
-              <span>[->]</span>
-            </a>
-          </div>
-        </article>
-
-        <!-- Project 6: OpenCore Hackintosh -->
-        <article class="project-card brutal-card scroll-card" data-category="ricing systems">
-          <div class="card-badge-row">
-            <span class="project-tag tag-white">BARE-METAL</span>
-            <span class="project-tag tag-lime">LOW-LEVEL</span>
-          </div>
-
-          <h3 class="project-title">
-            <a href="https://github.com/ejhay26/myHackintosh" target="_blank" rel="noopener noreferrer">
-              OpenCore EFI &amp; Hardware ACPI Patches
-            </a>
-          </h3>
-
-          <p class="project-summary">
-            Custom-built OpenCore EFI loader with hand-patched ACPI DSDT/SSDT tables, audio layout injections, and power management curves enabling stable, native-feel macOS execution on non-Apple hardware.
-          </p>
-
-          <div class="tech-pill-list">
-            <span class="tech-pill">ASL / ACPI</span>
-            <span class="tech-pill">OpenCore</span>
-            <span class="tech-pill">ProperTree</span>
-            <span class="tech-pill">Kernel Extensions</span>
-          </div>
-
-          <div class="card-footer-actions">
-            <a href="https://github.com/ejhay26/myHackintosh" target="_blank" rel="noopener noreferrer" class="brutal-btn btn-sm btn-white btn-depress">
-              <span>VIEW REPO</span>
-              <span>[->]</span>
-            </a>
-          </div>
-        </article>
       </div>
     </section>
 
-    <!-- Interactive Architectural Console -->
+    <!-- Interactive Terminal -->
     <section id="terminal" class="section-terminal container scroll-anim-section">
       <div class="section-header">
         <div>
-          <span class="section-eyebrow">// ARCHITECTURAL RUNTIME</span>
-          <h2 class="section-title">THE ARCHITECT CONSOLE</h2>
+          <span class="section-eyebrow">// INTERACTIVE TERMINAL</span>
+          <h2 class="section-title">TERMINAL</h2>
         </div>
         <p class="terminal-intro">
-          Inspect toolchain matrices, architecture tenets, and platform specs. Type a command or click a chip.
+          Type a command or click a chip to see my stack and project details.
         </p>
       </div>
 
       <div class="terminal-window brutal-card scroll-card">
         <div class="terminal-titlebar">
           <div class="window-decorations">
-            <span class="terminal-pill-tag">TERALABS</span>
             <span class="terminal-pill-tag">ZSH 5.9</span>
           </div>
-          <div class="terminal-title">terajaki@niri-box: ~ (zsh)</div>
+          <div class="terminal-title">terajaki@nixos: ~ (zsh)</div>
         </div>
 
         <div class="terminal-body" id="terminal-screen" aria-live="polite">
           <div class="term-line term-welcome">
-            <span class="term-green">> teralabs:</span> Architecture console active. Type <span class="term-yellow">help</span> or click quick chips below.
+            <span class="term-green">> terminal:</span> Ready. Type <span class="term-yellow">help</span> or click a chip below.
           </div>
         </div>
 
         <div class="terminal-shortcuts">
           <span class="shortcuts-label">FAST CHIPS:</span>
-          <button class="term-chip" data-cmd="architect">architect</button>
+          <button class="term-chip" data-cmd="about">about</button>
           <button class="term-chip" data-cmd="neofetch">neofetch</button>
           <button class="term-chip" data-cmd="cat stack.json">cat stack.json</button>
           <button class="term-chip" data-cmd="capstone --stat">capstone --stat</button>
@@ -533,7 +469,7 @@
         <form class="terminal-input-row" id="term-form">
           <span class="term-prompt">terajaki@box:~$</span>
           <div class="term-input-wrapper">
-            <input type="text" id="term-input" class="term-input" placeholder="type 'architect', 'help', 'neofetch'..." autocomplete="off" spellcheck="false">
+            <input type="text" id="term-input" class="term-input" placeholder="type 'about', 'help', 'neofetch'..." autocomplete="off" spellcheck="false">
             <div class="gpu-cursor-trail" id="cursor-trail"></div>
           </div>
           <button type="submit" class="brutal-btn btn-sm btn-lime">RUN</button>
@@ -557,23 +493,23 @@
             <h3 class="category-name">SYSTEMS &amp; DESKTOP</h3>
           </div>
           <ul class="skill-list">
-            <li><strong>Tauri v2:</strong> Lightweight native multi-OS desktop apps (~30MB RAM footprint).</li>
-            <li><strong>Rust:</strong> High-performance backend desktop services and memory safety.</li>
-            <li><strong>ACPI / ASL:</strong> Low-level hardware table patching and kernel extensions.</li>
-            <li><strong>Wayland:</strong> Custom tiling environments with Niri and Hyprland.</li>
+            <li><strong>Rust:</strong> Memory-safe native code for desktop services.</li>
+            <li><strong>Tauri v2:</strong> Light desktop apps that start fast without bundling Chromium (about 30MB of RAM in the capstone).</li>
+            <li><strong>Go:</strong> Small, fast services. I am moving my backends here.</li>
+            <li><strong>NixOS &amp; Linux:</strong> Daily driver, after Fedora and Arch.</li>
           </ul>
         </div>
 
         <div class="skill-category brutal-card bg-lime scroll-card">
           <div class="category-header">
             <span class="category-badge">[SRV]</span>
-            <h3 class="category-name">BACKEND &amp; REALTIME</h3>
+            <h3 class="category-name">BACKEND &amp; DATA</h3>
           </div>
           <ul class="skill-list">
-            <li><strong>Laravel 13:</strong> RESTful APIs, Sanctum authentication, job queues.</li>
-            <li><strong>Laravel Reverb:</strong> Sub-second WebSocket real-time event broadcasting.</li>
-            <li><strong>MariaDB / MySQL:</strong> Schema design, spatial GIS indexing, performance queries.</li>
-            <li><strong>Docker &amp; Podman:</strong> Containerized microservices on cloud Linux VPS.</li>
+            <li><strong>Go (Fiber):</strong> Lightweight APIs. Gin is next on the list to try.</li>
+            <li><strong>Laravel:</strong> REST APIs, Sanctum auth, queues, and Reverb WebSockets in the capstone.</li>
+            <li><strong>Databases:</strong> PostgreSQL, MariaDB/MySQL, or NoSQL, depending on the project.</li>
+            <li><strong>Python:</strong> Scripts for automation and fetching data.</li>
           </ul>
         </div>
 
@@ -583,23 +519,23 @@
             <h3 class="category-name">FRONTEND &amp; MOBILE</h3>
           </div>
           <ul class="skill-list">
-            <li><strong>Angular 20 &amp; Ionic 8:</strong> Reactive components, typed services, adaptive layout.</li>
-            <li><strong>Capacitor 8:</strong> Hardware access, geolocation, camera proofs, native pushes.</li>
-            <li><strong>Kotlin &amp; Flutter:</strong> Native Android development, offline-first architectures.</li>
-            <li><strong>Tactile CSS &amp; Motion:</strong> Handcrafted micro-interactions and tactile physics.</li>
+            <li><strong>Ionic + Angular:</strong> Used for the capstone because it covers mobile and desktop quickly and is what NEUST teaches.</li>
+            <li><strong>Kotlin:</strong> Native Android, used for Gabay.</li>
+            <li><strong>Flutter:</strong> Used for watch2gether. Rust Dioxus is on my list for later.</li>
+            <li><strong>Motion:</strong> anime.js on this site, and I like Motion (motion.dev).</li>
           </ul>
         </div>
 
         <div class="skill-category brutal-card bg-pink scroll-card">
           <div class="category-header">
             <span class="category-badge">[ENG]</span>
-            <h3 class="category-name">ARCHITECTURE ETHOS</h3>
+            <h3 class="category-name">HOW I WORK</h3>
           </div>
           <ul class="skill-list">
-            <li><strong>First-Principles First:</strong> Dissect the core problem before picking tools.</li>
-            <li><strong>Snappy Over Heavy:</strong> Prefer light native binaries over bloated memory-eaters.</li>
+            <li><strong>Low-level first:</strong> Lower-level languages run lighter and faster.</li>
+            <li><strong>Light over heavy:</strong> Small binaries and fast startup beat convenience layers.</li>
             <li><strong>Offline Resilient:</strong> Real-world software must function when networks fail.</li>
-            <li><strong>Zero AI Slop:</strong> Intentional typography, real code, no buzzword soup.</li>
+            <li><strong>Readable Code:</strong> Plain naming, small modules, documented decisions.</li>
           </ul>
         </div>
       </div>
@@ -609,15 +545,15 @@
     <section id="contact" class="section-contact container scroll-anim-section">
       <div class="contact-box brutal-card bg-lime scroll-card">
         <div class="contact-content">
-          <span class="contact-badge" data-rotate="-2">// COLLABORATION &amp; ARCHITECTURE</span>
-          <h2 class="contact-headline">NEED AN ARCHITECT WHO SOLVES PROBLEMS AS CLOSE TO THE METAL AS POSSIBLE?</h2>
+          <span class="contact-badge" data-rotate="-2">// CONTACT</span>
+          <h2 class="contact-headline">NEED A DEVELOPER FOR A DESKTOP, MOBILE, OR SYSTEMS PROJECT?</h2>
           <p class="contact-desc">
-            Whether it's evaluating and engineering high-speed desktop/mobile systems, architecting offline-resilient local networks, or untangling hardware/OS complexities, I'm ready to ship.
+            I take on desktop and mobile apps, offline-first local network tools, and hardware or OS-level problems. Email me with the details.
           </p>
 
           <div class="contact-actions">
-            <a href="mailto:ejperez623@gmail.com" class="brutal-btn btn-lg btn-yellow btn-depress">
-              <span>TRANSMIT EMAIL</span>
+            <a href="mailto:ejcp2005@gmail.com" class="brutal-btn btn-lg btn-yellow btn-depress">
+              <span>EMAIL ME</span>
               <span>[->]</span>
             </a>
             <a href="https://github.com/ejhay26" target="_blank" rel="noopener noreferrer" class="brutal-btn btn-lg btn-white btn-depress">
@@ -629,8 +565,8 @@
 
         <div class="contact-stamp" data-rotate="4">
           <div class="stamp-inner">
-            <span class="stamp-circle">TERALABS</span>
-            <span class="stamp-text">ARCHITECT</span>
+            <span class="stamp-circle">EJHAY26</span>
+            <span class="stamp-text">DEVELOPER</span>
             <span class="stamp-year">EST 2025</span>
           </div>
         </div>
@@ -642,7 +578,7 @@
   <footer class="site-footer container">
     <div class="footer-inner">
       <div class="footer-left">
-        <strong>Emmanuel John Perez</strong> (terajaki) // teralabs
+        <strong>Emmanuel John Perez</strong> (terajaki)
         <p class="footer-meta">
           <svg class="brutal-ph-flag-inline" viewBox="0 0 36 22" width="18" height="11">
             <rect width="36" height="11" fill="#0038A8" />
@@ -650,7 +586,7 @@
             <polygon points="0,0 18,11 0,22" fill="#FFFFFF" />
             <circle cx="6.5" cy="11" r="2.3" fill="#FCD116" />
           </svg>
-          PHILIPPINES &middot; EST. 2025 &middot; Architecting resilient multi-platform systems.
+          PHILIPPINES &middot; EST. 2025
         </p>
       </div>
       <div class="footer-right">
